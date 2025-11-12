@@ -79,3 +79,75 @@ The questions are self-answered and **sake of simplicity** is taken into account
 - If there is time left, we can add a "close" endpoint that revokes all PoAs for the account. 
 
 ---
+
+## System Requirements
+
+### 6. API Design
+
+**Q1:** What format should error responses use?
+- Use ResponseEntity with `HttpStatus` and `XApiResponse` body
+
+**Q2:** What endpoints are required?
+- POST - Create PoA
+- GET - Retrieve accounts by grantee
+- GET - Retrieve accounts by grantor
+- GET - Retrieve specific account by account number
+- PUT - Update PoA
+- DELETE - Delete/revoke PoA
+
+---
+
+### 7. Data Storage
+
+**Q1:** What's the expected data volume?
+- Hundreds of PoAs (Sake of simplicity, not realistic)
+
+---
+
+### 8. Security & Authentication
+
+**Q1:** Is authentication required for this assignment?
+- No, for the sake of simplicity. Assume a dedicated service handles authentication/authorization.
+
+**Q2:** Should there be role-based access control?
+- No, for the sake of simplicity.
+
+**Q3:** Should there be rate limiting?
+- No, for the sake of simplicity.
+
+---
+
+### 9. Testing Requirements
+
+**Q1:** What level of test coverage is expected?
+- Unit + integration tests
+- Minimum coverage: 80%
+
+**Q2:** Should we use embedded MongoDB for tests?
+- Mock repositories only
+
+---
+
+### 10. Non-Functional Requirements
+
+**Q1:** What should be the API response time?
+- Under 200ms
+
+**Q2:** Should the system be production-ready?
+- Partially, focus on core functionality first
+
+**Q3:** Should we implement caching?
+-  For the sake of simplicity, assume no caching.
+
+---
+
+### 11. Documentation Requirements
+
+**Q1:** Should we provide API documentation?
+- Yes, Swagger/OpenAPI
+
+**Q2:** Should code have JavaDoc comments?
+- No, code should be self-documenting
+
+**Q3:** Should there be a deployment guide?
+- For the sake of simplicity, assume no external dependencies.
