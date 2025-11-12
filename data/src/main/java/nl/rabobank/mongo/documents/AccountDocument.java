@@ -6,8 +6,6 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
-
 @Document(collection = "accounts")
 @Data
 @NoArgsConstructor
@@ -17,7 +15,7 @@ public sealed class AccountDocument {
     @Id
     private String accountNumber;
     private AccountType accountType;
-    private BigDecimal balance;
+    private Double balance;
 
     @Indexed
     private String accountHolderName;
@@ -31,7 +29,7 @@ final class PaymentAccountDocument extends AccountDocument {
 
     @Builder
     public PaymentAccountDocument(String accountNumber,
-                                  String accountHolderName, BigDecimal balance) {
+                                  String accountHolderName, Double balance) {
         super(accountNumber, AccountType.PAYMENT, balance, accountHolderName);
     }
 }
@@ -44,7 +42,7 @@ final class SavingsAccountDocument extends AccountDocument {
 
     @Builder
     public SavingsAccountDocument(String accountNumber,
-                                  String accountHolderName, BigDecimal balance) {
+                                  String accountHolderName, Double balance) {
         super(accountNumber, AccountType.SAVINGS, balance, accountHolderName);
     }
 }
