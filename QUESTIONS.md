@@ -14,7 +14,7 @@ The questions are self-answered and **sake of simplicity** is taken into account
 - No, must validate that `grantorName` matches `accountHolderName`
 
 **Q3:** Should there be any validation on account numbers?
-- Yes, must follow IBAN format (e.g., NL91RABO1234567890)
+- ~~Yes, must follow IBAN format (e.g., NL91RABO1234567890)~~ Account creation is out of scope for this assignment.
 
 **Q4:** Can the same person be both grantor and grantee (self-granting) for the same account?
 - Yes, if a person owns the account, he/she should automatically get WRITE access  
