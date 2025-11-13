@@ -1,4 +1,4 @@
-package nl.rabobank.mongo.documents;
+package nl.rabobank.mongo.documents.poa;
 
 public enum AuthorizationType {
     READ,

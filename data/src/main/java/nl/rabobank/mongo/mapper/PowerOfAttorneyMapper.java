@@ -1,8 +1,10 @@
-package nl.rabobank.mongo.documents;
+package nl.rabobank.mongo.mapper;
 
 import nl.rabobank.account.Account;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
+import nl.rabobank.mongo.documents.poa.AuthorizationType;
+import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ public class PowerOfAttorneyMapper {
 
     public static PowerOfAttorneyDocument toDocument(PowerOfAttorney powerOfAttorney) {
         return PowerOfAttorneyDocument.builder()
+                .id(powerOfAttorney.getId())
                 .grantorName(powerOfAttorney.getGrantorName())
                 .granteeName(powerOfAttorney.getGranteeName())
                 .accountNumber(powerOfAttorney.getAccount().getAccountNumber())
@@ -24,6 +27,7 @@ public class PowerOfAttorneyMapper {
 
     public static PowerOfAttorney toDomain(PowerOfAttorneyDocument document, Account account) {
         return PowerOfAttorney.builder()
+                .id(document.getId())
                 .grantorName(document.getGrantorName())
                 .granteeName(document.getGranteeName())
                 .account(account)

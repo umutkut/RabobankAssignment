@@ -8,6 +8,7 @@ import nl.rabobank.account.Account;
 @Builder(toBuilder = true)
 public class PowerOfAttorney
 {
+    String id;
     String granteeName;
     String grantorName;
     Account account;

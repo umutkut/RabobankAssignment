@@ -1,16 +1,19 @@
-package nl.rabobank.mongo.documents;
+package nl.rabobank.mongo.mapper;
 
+import lombok.val;
 import nl.rabobank.account.Account;
 import nl.rabobank.account.PaymentAccount;
 import nl.rabobank.account.SavingsAccount;
+import nl.rabobank.mongo.documents.account.AccountType;
+import nl.rabobank.mongo.documents.account.PaymentAccountDocument;
+import nl.rabobank.mongo.documents.account.SavingsAccountDocument;
 import org.junit.jupiter.api.Test;
 
+import static nl.rabobank.mongo.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AccountMapperTest {
 
-    public static final String SOME_ACCOUNT_NUMBER = "NL91RABO1234567890";
-    public static final String SOME_NAME = "Cheddar Dincer Tanis";
 
     @Test
     void shouldNotInstantiateUtilityClass() {
@@ -21,62 +24,54 @@ class AccountMapperTest {
     @Test
     void shouldConvertPaymentAccountToDocument() {
         // Given
-        PaymentAccount paymentAccount = new PaymentAccount(
-                SOME_ACCOUNT_NUMBER,
-                SOME_NAME,
-                1000.0
-        );
+        val paymentAccount = givenPaymentAccount();
 
         // When
-        AccountDocument document = AccountMapper.toDocument(paymentAccount);
+        val document = AccountMapper.toDocument(paymentAccount);
 
         // Then
         assertNotNull(document);
         assertInstanceOf(PaymentAccountDocument.class, document);
-        assertEquals(SOME_ACCOUNT_NUMBER, document.getAccountNumber());
-        assertEquals(SOME_NAME, document.getAccountHolderName());
-        assertEquals(1000.0, document.getBalance());
+        assertEquals(ACCOUNT_NUMBER, document.getAccountNumber());
+        assertEquals(GRANTOR, document.getAccountHolderName());
+        assertEquals(BALANCE, document.getBalance());
         assertEquals(AccountType.PAYMENT, document.getAccountType());
     }
 
     @Test
     void shouldConvertSavingsAccountToDocument() {
         // Given
-        SavingsAccount savingsAccount = new SavingsAccount(
-                SOME_ACCOUNT_NUMBER,
-                SOME_NAME,
-                5000.0
-        );
+        val savingsAccount = givenSavingsAccount();
 
         // When
-        AccountDocument document = AccountMapper.toDocument(savingsAccount);
+        val document = AccountMapper.toDocument(savingsAccount);
 
         // Then
         assertNotNull(document);
         assertInstanceOf(SavingsAccountDocument.class, document);
-        assertEquals(SOME_ACCOUNT_NUMBER, document.getAccountNumber());
-        assertEquals(SOME_NAME, document.getAccountHolderName());
-        assertEquals(5000.0, document.getBalance());
+        assertEquals(ACCOUNT_NUMBER, document.getAccountNumber());
+        assertEquals(GRANTOR, document.getAccountHolderName());
+        assertEquals(BALANCE, document.getBalance());
         assertEquals(AccountType.SAVINGS, document.getAccountType());
     }
 
     @Test
     void shouldThrowExceptionForUnknownAccountType() {
         // Given
-        Account unknownAccount = new Account() {
+        val unknownAccount = new Account() {
             @Override
             public String getAccountNumber() {
-                return SOME_ACCOUNT_NUMBER;
+                return ACCOUNT_NUMBER;
             }
 
             @Override
             public String getAccountHolderName() {
-                return SOME_NAME;
+                return GRANTOR;
             }
 
             @Override
             public Double getBalance() {
-                return 100.0;
+                return BALANCE;
             }
         };
 
@@ -91,40 +86,40 @@ class AccountMapperTest {
     @Test
     void shouldConvertPaymentAccountDocumentToDomain() {
         // Given
-        AccountDocument document = PaymentAccountDocument.builder()
-                .accountNumber(SOME_ACCOUNT_NUMBER)
-                .accountHolderName(SOME_NAME)
+        val document = PaymentAccountDocument.builder()
+                .accountNumber(ACCOUNT_NUMBER)
+                .accountHolderName(GRANTOR)
                 .balance(1000.0)
                 .build();
 
         // When
-        Account account = AccountMapper.toDomain(document);
+        val account = AccountMapper.toDomain(document);
 
         // Then
         assertNotNull(account);
         assertInstanceOf(PaymentAccount.class, account);
-        assertEquals(SOME_ACCOUNT_NUMBER, account.getAccountNumber());
-        assertEquals(SOME_NAME, account.getAccountHolderName());
+        assertEquals(ACCOUNT_NUMBER, account.getAccountNumber());
+        assertEquals(GRANTOR, account.getAccountHolderName());
         assertEquals(1000.0, account.getBalance());
     }
 
     @Test
     void shouldConvertSavingsAccountDocumentToDomain() {
         // Given
-        AccountDocument document = SavingsAccountDocument.builder()
-                .accountNumber(SOME_ACCOUNT_NUMBER)
-                .accountHolderName(SOME_NAME)
+        val document = SavingsAccountDocument.builder()
+                .accountNumber(ACCOUNT_NUMBER)
+                .accountHolderName(GRANTOR)
                 .balance(5000.0)
                 .build();
 
         // When
-        Account account = AccountMapper.toDomain(document);
+        val account = AccountMapper.toDomain(document);
 
         // Then
         assertNotNull(account);
         assertInstanceOf(SavingsAccount.class, account);
-        assertEquals(SOME_ACCOUNT_NUMBER, account.getAccountNumber());
-        assertEquals(SOME_NAME, account.getAccountHolderName());
+        assertEquals(ACCOUNT_NUMBER, account.getAccountNumber());
+        assertEquals(GRANTOR, account.getAccountHolderName());
         assertEquals(5000.0, account.getBalance());
     }
 
@@ -132,15 +127,15 @@ class AccountMapperTest {
     @Test
     void shouldPreserveAllFieldsInRoundTripConversionForPaymentAccount() {
         // Given
-        PaymentAccount originalAccount = new PaymentAccount(
-                SOME_ACCOUNT_NUMBER,
-                SOME_NAME,
+        val originalAccount = new PaymentAccount(
+                ACCOUNT_NUMBER,
+                GRANTOR,
                 2500.50
         );
 
         // When
-        AccountDocument document = AccountMapper.toDocument(originalAccount);
-        Account reconvertedAccount = AccountMapper.toDomain(document);
+        val document = AccountMapper.toDocument(originalAccount);
+        val reconvertedAccount = AccountMapper.toDomain(document);
 
         // Then
         assertEquals(originalAccount.getAccountNumber(), reconvertedAccount.getAccountNumber());
@@ -152,15 +147,15 @@ class AccountMapperTest {
     @Test
     void shouldPreserveAllFieldsInRoundTripConversionForSavingsAccount() {
         // Given
-        SavingsAccount originalAccount = new SavingsAccount(
-                SOME_ACCOUNT_NUMBER,
-                SOME_NAME,
+        val originalAccount = new SavingsAccount(
+                ACCOUNT_NUMBER,
+                GRANTOR,
                 10000.75
         );
 
         // When
-        AccountDocument document = AccountMapper.toDocument(originalAccount);
-        Account reconvertedAccount = AccountMapper.toDomain(document);
+        val document = AccountMapper.toDocument(originalAccount);
+        val reconvertedAccount = AccountMapper.toDomain(document);
 
         // Then
         assertEquals(originalAccount.getAccountNumber(), reconvertedAccount.getAccountNumber());

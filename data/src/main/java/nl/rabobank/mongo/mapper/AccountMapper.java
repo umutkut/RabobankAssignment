@@ -1,8 +1,11 @@
-package nl.rabobank.mongo.documents;
+package nl.rabobank.mongo.mapper;
 
 import nl.rabobank.account.Account;
 import nl.rabobank.account.PaymentAccount;
 import nl.rabobank.account.SavingsAccount;
+import nl.rabobank.mongo.documents.account.AccountDocument;
+import nl.rabobank.mongo.documents.account.PaymentAccountDocument;
+import nl.rabobank.mongo.documents.account.SavingsAccountDocument;
 
 public class AccountMapper {
     AccountMapper() {
