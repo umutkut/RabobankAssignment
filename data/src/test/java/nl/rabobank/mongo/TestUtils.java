@@ -5,12 +5,12 @@ import nl.rabobank.account.SavingsAccount;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.mongo.documents.account.PaymentAccountDocument;
+import nl.rabobank.mongo.documents.account.SavingsAccountDocument;
 import nl.rabobank.mongo.documents.poa.AuthorizationType;
 import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 
 import java.time.LocalDateTime;
 
-// Simple test data helpers for val variants
 public class TestUtils {
     public static final String ACCOUNT_NUMBER = "NL91RABO1234567890";
     public static final String OTHER_ACCOUNT_NUMBER = "NL13RABO0987654321";
@@ -37,6 +37,14 @@ public class TestUtils {
 
     public static PaymentAccountDocument givenPaymentAccountDocument() {
         return PaymentAccountDocument.builder()
+                .accountNumber(ACCOUNT_NUMBER)
+                .accountHolderName(GRANTOR)
+                .balance(BALANCE)
+                .build();
+    }
+
+    public static SavingsAccountDocument givenSavingsAccountDocument() {
+        return SavingsAccountDocument.builder()
                 .accountNumber(ACCOUNT_NUMBER)
                 .accountHolderName(GRANTOR)
                 .balance(BALANCE)

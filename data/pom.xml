@@ -10,7 +10,6 @@
     <artifactId>rabobank-assignment-data</artifactId>
 
     <dependencies>
-        <!-- Domain module -->
         <dependency>
             <groupId>nl.rabobank</groupId>
             <artifactId>rabobank-assignment-domain</artifactId>
@@ -34,6 +33,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
 </project>

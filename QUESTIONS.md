@@ -134,7 +134,8 @@ The questions are self-answered and **sake of simplicity** is taken into account
 - Under 200ms
 
 **Q2:** Should the system be production-ready?
-- Partially, focus on core functionality first
+
+- Yes, the code should be production-ready.
 
 **Q3:** Should we implement caching?
 -  For the sake of simplicity, assume no caching.
