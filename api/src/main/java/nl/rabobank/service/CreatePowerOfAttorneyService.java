@@ -26,7 +26,7 @@ public class CreatePowerOfAttorneyService {
         log.debug("Creating POA for accountNumber: {}", request.accountNumber());
         val account = accountRepository
                 .findByAccountNumber(request.accountNumber())
-                .orElseThrow(() -> new AccountNotFoundException("With accountNumber:" + request.accountNumber()));
+                .orElseThrow(() -> new AccountNotFoundException("With accountNumber: " + request.accountNumber()));
 
         if (!Objects.equals(account.getAccountHolderName(), request.grantorName())) {
             throw new UnsupportedUserOperationException(request.grantorName() + "is not owner of the requested account.");

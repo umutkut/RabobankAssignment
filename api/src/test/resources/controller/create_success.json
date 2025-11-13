@@ -1,0 +1,12 @@
+{
+  "id": "0899c184-1e66-46b4-ae0a-5b8536d6356b",
+  "grantorName": "Cheddar Dincer Tanis",
+  "granteeName": "Merkur Dincer Tanis",
+  "account": {
+    "accountNumber": "NL91RABO1234567890",
+    "accountHolderName": "Cheddar Dincer Tanis",
+    "balance": 1000.0,
+    "type": "PAYMENT"
+  },
+  "authorization": "READ"
+}

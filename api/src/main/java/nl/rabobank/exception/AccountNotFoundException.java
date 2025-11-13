@@ -2,6 +2,6 @@ package nl.rabobank.exception;
 
 public class AccountNotFoundException extends RuntimeException {
     public AccountNotFoundException(String message) {
-        super("Account not found." + message);
+        super("Account not found. " + message);
     }
 }

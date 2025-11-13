@@ -17,17 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static nl.rabobank.controller.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreatePowerOfAttorneyServiceTest {
-
-    private static final double BALANCE = 1000.0;
-    private static final String GENERATED_ID = "uuid-123";
-    private static final String ACCOUNT_NUMBER = "NL13RABO0987654321";
-    private static final String GRANTOR = "Cheddar Dincer Tanis";
-    private static final String GRANTEE = "Merkur Dincer Tanis";
 
     @Mock
     private AccountRepository accountRepository;
@@ -44,7 +39,7 @@ class CreatePowerOfAttorneyServiceTest {
         // given
         val account = new PaymentAccount(ACCOUNT_NUMBER, GRANTOR, BALANCE);
         when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
-        when(idGenerator.generateUUID()).thenReturn(GENERATED_ID);
+        when(idGenerator.generateUUID()).thenReturn(POA_ID);
         when(powerOfAttorneyRepository.save(any(PowerOfAttorney.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -60,7 +55,7 @@ class CreatePowerOfAttorneyServiceTest {
 
         // then
         assertNotNull(result);
-        assertEquals(GENERATED_ID, result.getId());
+        assertEquals(POA_ID, result.getId());
         assertEquals(GRANTEE, result.getGranteeName());
         assertEquals(GRANTOR, result.getGrantorName());
         assertEquals(account, result.getAccount());
@@ -97,7 +92,7 @@ class CreatePowerOfAttorneyServiceTest {
         when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
 
         val request = new CreatePowerOfAttorneyServiceRequest(
-                GRANTOR, // request grantor does not match account holder name
+                GRANTOR,
                 GRANTEE,
                 ACCOUNT_NUMBER,
                 Authorization.READ
