@@ -5,8 +5,8 @@ import nl.rabobank.account.PaymentAccount;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.AccountNotFoundException;
+import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
-import nl.rabobank.exception.UnsupportedUserOperationException;
 import nl.rabobank.repository.AccountRepository;
 import nl.rabobank.repository.PowerOfAttorneyRepository;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
@@ -109,7 +109,7 @@ class CreatePowerOfAttorneyServiceTest {
         );
 
         // when / then
-        assertThrows(UnsupportedUserOperationException.class, () -> service.create(request));
+        assertThrows(ForbiddenOperationException.class, () -> service.create(request));
         verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
         verifyNoInteractions(powerOfAttorneyRepository, idGenerator);
     }

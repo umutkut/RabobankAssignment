@@ -5,9 +5,9 @@ import lombok.val;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.controller.advice.GlobalControllerAdvice;
 import nl.rabobank.exception.AccountNotFoundException;
+import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
-import nl.rabobank.exception.UnsupportedUserOperationException;
 import nl.rabobank.service.*;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
@@ -28,6 +28,7 @@ import java.util.List;
 import static nl.rabobank.TestUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -58,6 +59,9 @@ class PowerOfAttorneyControllerTest {
 
     @MockitoBean
     UpdatePowerOfAttorneyAuthorizationService updatePowerOfAttorneyAuthorizationService;
+
+    @MockitoBean
+    DeletePowerOfAttorneyService deletePowerOfAttorneyService;
 
     @Test
     void create_success() throws Exception {
@@ -101,7 +105,7 @@ class PowerOfAttorneyControllerTest {
     void create_unsupportedOperation() throws Exception {
         //Given
         when(createPowerOfAttorneyService.create(any(CreatePowerOfAttorneyServiceRequest.class)))
-                .thenThrow(new UnsupportedUserOperationException("Some other grantor is not owner of the requested account."));
+                .thenThrow(new ForbiddenOperationException("User cannot operate. Some other grantor is not owner of the requested account."));
 
         val request = new CreatePowerOfAttorneyServiceRequest(GRANTOR, GRANTEE, ACCOUNT_NUMBER, Authorization.READ);
 
@@ -111,7 +115,7 @@ class PowerOfAttorneyControllerTest {
         mockMvc.perform(post(POA_API_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
 
@@ -226,6 +230,39 @@ class PowerOfAttorneyControllerTest {
         // When & Then
         mockMvc.perform(put(POA_API_PATH + "/" + POA_ID + "?authorization=WRITE"))
                 .andExpect(status().isNotFound())
+                .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+    }
+
+    @Test
+    void delete_success() throws Exception {
+        // When & Then
+        mockMvc.perform(delete(POA_API_PATH + "/" + POA_ID + "?grantorName=" + GRANTOR))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void delete_notFound() throws Exception {
+        // Given
+        doThrow(new PowerOfAttorneyNotFoundException("With id: " + POA_ID))
+                .when(deletePowerOfAttorneyService).deleteByIdAsGrantor(POA_ID, GRANTOR);
+        val expectedJson = readStringFromFile("controller/poa_not_found.json");
+
+        // When & Then
+        mockMvc.perform(delete(POA_API_PATH + "/" + POA_ID + "?grantorName=" + GRANTOR))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+    }
+
+    @Test
+    void delete_forbidden() throws Exception {
+        // Given
+        doThrow(new ForbiddenOperationException("Only the grantor may delete this PoA"))
+                .when(deletePowerOfAttorneyService).deleteByIdAsGrantor(POA_ID, GRANTOR);
+        val expectedJson = readStringFromFile("controller/forbidden_operation.json");
+
+        // When & Then
+        mockMvc.perform(delete(POA_API_PATH + "/" + POA_ID + "?grantorName=" + GRANTOR))
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
 }

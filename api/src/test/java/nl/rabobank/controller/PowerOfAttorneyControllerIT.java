@@ -106,7 +106,7 @@ class PowerOfAttorneyControllerIT {
         mockMvc.perform(post(POA_API_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
 

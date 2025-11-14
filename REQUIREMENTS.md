@@ -49,9 +49,11 @@ GET /api/v1/power-of-attorney/accounts/granted/{requesterName}&page={num}&size={
 - Default page size: 5
 - Default sorting: by accountNumber
 
-### Get Specific Account
-GET /api/v1/power-of-attorney/account/{accountNumber}
-- Returns PoA details for specific account
+### Get Power of Attorney
+
+GET /api/v1/power-of-attorney/{poaId}
+
+- Returns PoA details of provided ID
 
 ### Update Power of Attorney
 PUT /api/v1/power-of-attorney/{id}

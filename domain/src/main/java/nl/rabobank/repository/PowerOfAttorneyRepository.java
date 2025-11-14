@@ -16,4 +16,6 @@ public interface PowerOfAttorneyRepository {
     Page<PowerOfAttorney> findByGranteeName(String granteeName, Pageable pageable);
 
     Page<PowerOfAttorney> findByGrantorName(String grantorName, Pageable pageable);
+
+    void deleteById(String id);
 }

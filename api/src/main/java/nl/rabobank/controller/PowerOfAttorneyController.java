@@ -25,6 +25,7 @@ public class PowerOfAttorneyController {
     private final GetGranteePowerOfAttorneyService getGranteePowerOfAttorneyService;
     private final GetGrantorPowerOfAttorneyService getGrantorPowerOfAttorneyService;
     private final UpdatePowerOfAttorneyAuthorizationService updatePowerOfAttorneyAuthorizationService;
+    private final DeletePowerOfAttorneyService deletePowerOfAttorneyService;
 
     @PostMapping
     public ResponseEntity<PowerOfAttorneyAPIResponse> create(@RequestBody CreatePowerOfAttorneyServiceRequest request) {
@@ -62,5 +63,12 @@ public class PowerOfAttorneyController {
         val poas = getGrantorPowerOfAttorneyService.listPoasForGrantor(grantorName, pageable);
         val body = poas.map(PowerOfAttorneyAPIResponse::from);
         return ResponseEntity.ok(body);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String id,
+                                       @RequestParam("grantorName") String grantorName) {
+        deletePowerOfAttorneyService.deleteByIdAsGrantor(id, grantorName);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -59,6 +59,11 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
         return mapOptionalPoaDocToDomain(paoDocument);
     }
 
+    @Override
+    public void deleteById(String id) {
+        powerOfAttorneyMongoClient.deleteById(id);
+    }
+
     private List<PowerOfAttorney> mapListOfPoaDocsToDomain(List<PowerOfAttorneyDocument> poaDocuments) {
         val documentNumbers = poaDocuments.stream().map(PowerOfAttorneyDocument::getAccountNumber).toList();
         val accountNumberAccountMap = accountMongoClient.findAllByAccountNumberIn(documentNumbers).stream().collect(

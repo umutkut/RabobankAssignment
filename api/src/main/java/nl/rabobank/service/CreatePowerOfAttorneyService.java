@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.AccountNotFoundException;
+import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
-import nl.rabobank.exception.UnsupportedUserOperationException;
 import nl.rabobank.repository.AccountRepository;
 import nl.rabobank.repository.PowerOfAttorneyRepository;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
@@ -30,7 +30,7 @@ public class CreatePowerOfAttorneyService {
                 .orElseThrow(() -> new AccountNotFoundException("With accountNumber: " + request.accountNumber()));
 
         if (!account.getAccountHolderName().equals(request.grantorName())) {
-            throw new UnsupportedUserOperationException(request.grantorName() + " is not owner of the requested account.");
+            throw new ForbiddenOperationException("User cannot operate. " + request.grantorName() + " is not owner of the requested account.");
         }
 
         powerOfAttorneyRepository
