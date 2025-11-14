@@ -9,7 +9,7 @@ import nl.rabobank.repository.PowerOfAttorneyRepository;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.Clock;
 
 @Slf4j
 @Service
@@ -17,6 +17,7 @@ import java.time.Instant;
 public class UpdatePowerOfAttorneyAuthorizationService {
 
     private final PowerOfAttorneyRepository powerOfAttorneyRepository;
+    private final Clock clock;
 
     public PowerOfAttorney updateAuthorization(UpdatePowerOfAttorneyAuthorizationRequest request) {
         log.debug("Updating authorization for POA id: {} to {}", request.paoId(), request.authorization());
@@ -25,7 +26,7 @@ public class UpdatePowerOfAttorneyAuthorizationService {
 
         val updated = poa.toBuilder()
                 .authorization(request.authorization())
-                .updatedAt(Instant.now())
+                .updatedAt(clock.instant())
                 .build();
 
         val saved = powerOfAttorneyRepository.save(updated);

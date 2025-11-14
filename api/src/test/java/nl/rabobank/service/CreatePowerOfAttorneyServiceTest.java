@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
 import java.util.Optional;
 
 import static nl.rabobank.TestUtils.*;
@@ -31,6 +32,8 @@ class CreatePowerOfAttorneyServiceTest {
     private PowerOfAttorneyRepository powerOfAttorneyRepository;
     @Mock
     private IdGenerator idGenerator;
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private CreatePowerOfAttorneyService service;
@@ -45,6 +48,7 @@ class CreatePowerOfAttorneyServiceTest {
         when(idGenerator.generateUUID()).thenReturn(POA_ID);
         when(powerOfAttorneyRepository.save(any(PowerOfAttorney.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+        when(clock.instant()).thenReturn(CREATED_AT);
 
         val request = new CreatePowerOfAttorneyServiceRequest(
                 GRANTOR,
@@ -63,7 +67,9 @@ class CreatePowerOfAttorneyServiceTest {
         assertEquals(GRANTOR, result.grantorName());
         assertEquals(account, result.account());
         assertEquals(Authorization.WRITE, result.authorization());
-
+        assertEquals(CREATED_AT, result.createdAt());
+        assertEquals(CREATED_AT, result.updatedAt());
+        
         verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
         verify(powerOfAttorneyRepository, times(1)).findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER);
         verify(idGenerator, times(1)).generateUUID();
