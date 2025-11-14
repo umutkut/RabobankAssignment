@@ -12,16 +12,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Optional;
 
 import static nl.rabobank.TestUtils.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -101,6 +107,27 @@ class PowerOfAttorneyControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
+                .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+    }
+
+    @Test
+    void listByGrantee_success_withPagination() throws Exception {
+        // Given
+        val poa1 = givenPowerOfAttorney();
+        val poa2 = givenPowerOfAttorney().toBuilder()
+                .id("poa-2")
+                .account(givenSavingsAccount())
+                .build();
+        val pageable = PageRequest.of(0, 2);
+        val page = new PageImpl<>(List.of(poa1, poa2), pageable, 2);
+        when(powerOfAttorneyRepository.findByGranteeName(eq(GRANTEE), any(Pageable.class)))
+                .thenReturn(page);
+
+        val expectedJson = readStringFromFile("controller/poas_by_grantee_page0_size2.json");
+
+        // When & Then
+        mockMvc.perform(get(POA_API_PATH + "/grantee/" + GRANTEE + "?page=0&size=2"))
+                .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
 }
