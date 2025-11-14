@@ -21,7 +21,6 @@ public class CreatePowerOfAttorneyService {
     private final PowerOfAttorneyRepository powerOfAttorneyRepository;
     private final IdGenerator idGenerator;
 
-
     public PowerOfAttorney create(CreatePowerOfAttorneyServiceRequest request) {
         log.debug("Creating POA for accountNumber: {}", request.accountNumber());
         val account = accountRepository

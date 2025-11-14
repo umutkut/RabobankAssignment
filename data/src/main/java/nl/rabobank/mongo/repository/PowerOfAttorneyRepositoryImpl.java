@@ -45,15 +45,15 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
 
     public List<PowerOfAttorney> findByGranteeName(String granteeName) {
         val poaDocuments = powerOfAttorneyMongoClient.findByGranteeNameAndRevokedFalse(granteeName);
-        return formPowerOfAttorneys(poaDocuments);
+        return mapListOfPoaDocsToDomain(poaDocuments);
     }
 
     public List<PowerOfAttorney> findByGrantorName(String grantorName) {
         val poaDocuments = powerOfAttorneyMongoClient.findByGrantorNameAndRevokedFalse(grantorName);
-        return formPowerOfAttorneys(poaDocuments);
+        return mapListOfPoaDocsToDomain(poaDocuments);
     }
 
-    private List<PowerOfAttorney> formPowerOfAttorneys(List<PowerOfAttorneyDocument> poaDocuments) {
+    private List<PowerOfAttorney> mapListOfPoaDocsToDomain(List<PowerOfAttorneyDocument> poaDocuments) {
         val documentNumbers = poaDocuments.stream().map(PowerOfAttorneyDocument::getAccountNumber).toList();
         val accountNumberAccountMap = accountMongoClient.findAllByAccountNumberIn(documentNumbers).stream().collect(
                 Collectors.toMap(
