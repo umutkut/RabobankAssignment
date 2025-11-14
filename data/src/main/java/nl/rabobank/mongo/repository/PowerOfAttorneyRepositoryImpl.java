@@ -35,12 +35,12 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
     }
 
     public List<PowerOfAttorney> findActiveByGranteeName(String granteeName) {
-        val poaDocuments = powerOfAttorneyMongoClient.findByGranteeNameAndRevokedFalse(granteeName);
+        val poaDocuments = powerOfAttorneyMongoClient.findByGranteeName(granteeName);
         return mapListOfPoaDocsToDomain(poaDocuments);
     }
 
     public List<PowerOfAttorney> findActiveByGrantorName(String grantorName) {
-        val poaDocuments = powerOfAttorneyMongoClient.findByGrantorNameAndRevokedFalse(grantorName);
+        val poaDocuments = powerOfAttorneyMongoClient.findByGrantorName(grantorName);
         return mapListOfPoaDocsToDomain(poaDocuments);
     }
 

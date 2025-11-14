@@ -30,7 +30,6 @@ public class PowerOfAttorneyDocument {
 
     private AuthorizationType authorizationType;
 
-    private boolean revoked = false;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 }

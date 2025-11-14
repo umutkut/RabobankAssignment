@@ -62,21 +62,23 @@ The questions are self-answered and **sake of simplicity** is taken into account
 - Yes, creation + last modified + modified by user (lower priority, if there is time to do it)
 
 **Q4:** Is there a concept of expiration for PoAs?
-- No, permanent until revoked
+
+- No, permanent until deleted
 
 ---
 
 ### 5. Lifecycle Management
 
-**Q1:** Can a Power of Attorney be revoked?
-- Yes, need "revoke" endpoint (soft delete with flag)
+**Q1:** Can a Power of Attorney be deleted?
 
-**Q2:** Who can revoke a PoA?
+- Yes, need "delete" endpoint
+
+**Q2:** Who can delete a PoA?
 - Only the grantor
 
 **Q3:** What happens if an account is closed?
 - Out of scope for this assignment. 
-- If there is time left, we can add a "close" endpoint that revokes all PoAs for the account. 
+- If there is time left, we can add a "close" endpoint that deletes all PoAs for the account.
 
 ---
 
@@ -93,7 +95,7 @@ The questions are self-answered and **sake of simplicity** is taken into account
 - GET - Retrieve accounts by grantor
 - GET - Retrieve specific account by account number
 - PUT - Update PoA
-- DELETE - Delete/revoke PoA
+- DELETE - Delete PoA
 
 ---
 

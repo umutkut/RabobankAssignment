@@ -20,7 +20,6 @@ public class PowerOfAttorneyMapper {
                 .granteeName(powerOfAttorney.getGranteeName())
                 .accountNumber(powerOfAttorney.getAccount().getAccountNumber())
                 .authorizationType(mapToAuthorizationType(powerOfAttorney.getAuthorization()))
-                .revoked(false)
                 .createdAt(LocalDateTime.now())
                 .build();
     }

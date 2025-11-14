@@ -67,7 +67,6 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(GRANTEE, toSave.getGranteeName());
         assertEquals(ACCOUNT_NUMBER, toSave.getAccountNumber());
         assertEquals(AuthorizationType.READ, toSave.getAuthorizationType());
-        assertFalse(toSave.isRevoked());
         assertNotNull(toSave.getCreatedAt());
     }
 
@@ -129,7 +128,7 @@ class PowerOfAttorneyRepositoryImplTest {
         val d1 = givenPowerOfAttorneyDocument();
         val d2 = givenPowerOfAttorneyDocument().toBuilder().id("id-2").accountNumber(OTHER_ACCOUNT_NUMBER).build();
 
-        when(powerOfAttorneyMongoClient.findByGranteeNameAndRevokedFalse(GRANTEE))
+        when(powerOfAttorneyMongoClient.findByGranteeName(GRANTEE))
                 .thenReturn(List.of(d1, d2));
 
         val a1 = givenPaymentAccountDocument();
@@ -147,7 +146,7 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(OTHER_ACCOUNT_NUMBER, result.get(1).getAccount().getAccountNumber());
         assertEquals(Authorization.READ, result.get(1).getAuthorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGranteeNameAndRevokedFalse(GRANTEE);
+        verify(powerOfAttorneyMongoClient, times(1)).findByGranteeName(GRANTEE);
         verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER));
     }
 
@@ -155,7 +154,7 @@ class PowerOfAttorneyRepositoryImplTest {
     void findActiveByGrantorName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
-        when(powerOfAttorneyMongoClient.findByGrantorNameAndRevokedFalse(GRANTOR))
+        when(powerOfAttorneyMongoClient.findByGrantorName(GRANTOR))
                 .thenReturn(List.of(d1));
 
         val a1 = givenPaymentAccountDocument();
@@ -173,7 +172,7 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(ACCOUNT_NUMBER, poa.getAccount().getAccountNumber());
         assertEquals(Authorization.READ, poa.getAuthorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorNameAndRevokedFalse(GRANTOR);
+        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorName(GRANTOR);
         verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER));
     }
 

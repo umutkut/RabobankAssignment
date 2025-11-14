@@ -58,7 +58,6 @@ public class TestUtils {
                 .granteeName(GRANTEE)
                 .accountNumber(ACCOUNT_NUMBER)
                 .authorizationType(AuthorizationType.READ)
-                .revoked(false)
                 .createdAt(LocalDateTime.now())
                 .build();
     }

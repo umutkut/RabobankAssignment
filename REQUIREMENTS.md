@@ -23,9 +23,10 @@ This API allows account holders to grant and manage Power of Attorney authorizat
 - SAVINGS - savings account
 
 ### Lifecycle
-- PoAs are permanent until revoked
-- Only the grantor can revoke a PoA
-- Revocation is soft delete (sets a flag, doesn't remove from database)
+
+- PoAs are permanent until deleted
+- Only the grantor can delete a PoA
+- Deletion removes the PoA from the database (there should be audit trail for this)
 - No expiration dates
 
 ## API Endpoints
@@ -56,10 +57,11 @@ GET /api/v1/power-of-attorney/account/{accountNumber}
 PUT /api/v1/power-of-attorney/{id}
 - Updates authorization type (READ/WRITE)
 
-### Revoke Power of Attorney
+### Delete Power of Attorney
 DELETE /api/v1/power-of-attorney/{id}
-- Soft deletes PoA (sets revoked flag)
-- Only grantor can revoke
+
+- Deletes the PoA
+- Only the grantor can perform deletion
 
 ## Error Handling
 
@@ -77,7 +79,7 @@ Common status codes:
 
 - Store in MongoDB
 - Expected volume: hundreds of PoAs
-- Soft delete for revoked PoAs
+- Deletion removes PoAs
 - Audit fields: createdAt, lastModifiedAt, modifiedBy (lower priority)
 
 ## Non-Functional Requirements

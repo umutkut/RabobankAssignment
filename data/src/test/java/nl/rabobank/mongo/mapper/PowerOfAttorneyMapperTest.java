@@ -37,7 +37,6 @@ class PowerOfAttorneyMapperTest {
         assertEquals(GRANTEE, document.getGranteeName());
         assertEquals(ACCOUNT_NUMBER, document.getAccountNumber());
         assertEquals(AuthorizationType.READ, document.getAuthorizationType());
-        assertFalse(document.isRevoked());
         assertNotNull(document.getCreatedAt());
         assertTrue(document.getCreatedAt().isAfter(beforeCreation.minusSeconds(1)));
         assertTrue(document.getCreatedAt().isBefore(afterCreation.plusSeconds(1)));

@@ -9,9 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface PowerOfAttorneyMongoClient extends MongoRepository<PowerOfAttorneyDocument, String> {
-    List<PowerOfAttorneyDocument> findByGranteeNameAndRevokedFalse(String granteeName);
+    List<PowerOfAttorneyDocument> findByGranteeName(String granteeName);
 
-    List<PowerOfAttorneyDocument> findByGrantorNameAndRevokedFalse(String grantorName);
+    List<PowerOfAttorneyDocument> findByGrantorName(String grantorName);
 
     Optional<PowerOfAttorneyDocument> findByGrantorNameAndGranteeNameAndAccountNumber(String grantor, String grantee, String accountNumber);
 }
