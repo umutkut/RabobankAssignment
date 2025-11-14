@@ -1,10 +1,15 @@
 package nl.rabobank.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import nl.rabobank.controller.model.PowerOfAttorneyAPIResponse;
 import nl.rabobank.service.CreatePowerOfAttorneyService;
+import nl.rabobank.service.GetAccessibleAccountsService;
 import nl.rabobank.service.GetPowerOfAttorneyByIdService;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,17 +22,27 @@ public class PowerOfAttorneyController {
 
     private final CreatePowerOfAttorneyService createPowerOfAttorneyService;
     private final GetPowerOfAttorneyByIdService getPowerOfAttorneyByIdService;
+    private final GetAccessibleAccountsService getAccessibleAccountsService;
 
     @PostMapping
     public ResponseEntity<PowerOfAttorneyAPIResponse> create(@RequestBody CreatePowerOfAttorneyServiceRequest request) {
-        var poa = createPowerOfAttorneyService.create(request);
+        val poa = createPowerOfAttorneyService.create(request);
         URI location = URI.create("/api/v1/power-of-attorney/" + poa.getId());
         return ResponseEntity.created(location).body(PowerOfAttorneyAPIResponse.from(poa));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PowerOfAttorneyAPIResponse> getById(@PathVariable("id") String id) {
-        var poa = getPowerOfAttorneyByIdService.getById(id);
+        val poa = getPowerOfAttorneyByIdService.getById(id);
         return ResponseEntity.ok(PowerOfAttorneyAPIResponse.from(poa));
+    }
+
+    @GetMapping("/grantee/{granteeName}")
+    public ResponseEntity<Page<PowerOfAttorneyAPIResponse>> listByGrantee(
+            @PathVariable("granteeName") String granteeName,
+            @PageableDefault(sort = "accountNumber", size = 5) Pageable pageable) {
+        val poas = getAccessibleAccountsService.listPoasForUser(granteeName, pageable);
+        val body = poas.map(PowerOfAttorneyAPIResponse::from);
+        return ResponseEntity.ok(body);
     }
 }

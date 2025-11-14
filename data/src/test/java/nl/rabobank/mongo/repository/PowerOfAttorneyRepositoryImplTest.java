@@ -15,6 +15,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -123,13 +125,15 @@ class PowerOfAttorneyRepositoryImplTest {
     }
 
     @Test
-    void findActiveByGranteeName_shouldJoinAccountsAndMapAll() {
+    void findByGranteeName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
         val d2 = givenPowerOfAttorneyDocument().toBuilder().id("id-2").accountNumber(OTHER_ACCOUNT_NUMBER).build();
 
-        when(powerOfAttorneyMongoClient.findByGranteeName(GRANTEE))
-                .thenReturn(List.of(d1, d2));
+        val pageable = PageRequest.of(0, 10);
+        val page = new PageImpl<>(List.of(d1, d2), pageable, 2);
+        when(powerOfAttorneyMongoClient.findByGranteeName(GRANTEE, pageable))
+                .thenReturn(page);
 
         val a1 = givenPaymentAccountDocument();
         val a2 = givenPaymentAccountDocument().toBuilder().accountNumber(OTHER_ACCOUNT_NUMBER).build();
@@ -137,7 +141,8 @@ class PowerOfAttorneyRepositoryImplTest {
                 .thenReturn(List.of(a1, a2));
 
         // When
-        val result = service.findActiveByGranteeName(GRANTEE);
+        val resultPage = service.findByGranteeName(GRANTEE, pageable);
+        val result = resultPage.getContent();
 
         // Then
         assertEquals(2, result.size());
@@ -145,13 +150,14 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(Authorization.READ, result.get(0).getAuthorization());
         assertEquals(OTHER_ACCOUNT_NUMBER, result.get(1).getAccount().getAccountNumber());
         assertEquals(Authorization.READ, result.get(1).getAuthorization());
+        assertEquals(2, resultPage.getTotalElements());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGranteeName(GRANTEE);
+        verify(powerOfAttorneyMongoClient, times(1)).findByGranteeName(GRANTEE, pageable);
         verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER));
     }
 
     @Test
-    void findActiveByGrantorName_shouldJoinAccountsAndMapAll() {
+    void findByGrantorName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
         when(powerOfAttorneyMongoClient.findByGrantorName(GRANTOR))
@@ -162,7 +168,7 @@ class PowerOfAttorneyRepositoryImplTest {
                 .thenReturn(List.of(a1));
 
         // When
-        val result = service.findActiveByGrantorName(GRANTOR);
+        val result = service.findByGrantorName(GRANTOR);
 
         // Then
         assertEquals(1, result.size());

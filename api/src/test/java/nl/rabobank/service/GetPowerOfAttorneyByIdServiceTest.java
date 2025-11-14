@@ -12,8 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static nl.rabobank.controller.TestUtils.POA_ID;
-import static nl.rabobank.controller.TestUtils.givenPowerOfAttorney;
+import static nl.rabobank.TestUtils.POA_ID;
+import static nl.rabobank.TestUtils.givenPowerOfAttorney;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -1,0 +1,53 @@
+{
+  "content": [
+    {
+      "id": "0899c184-1e66-46b4-ae0a-5b8536d6356b",
+      "grantorName": "Cheddar Dincer Tanis",
+      "granteeName": "Merkur Dincer Tanis",
+      "account": {
+        "accountNumber": "NL91RABO1234567890",
+        "accountHolderName": "Cheddar Dincer Tanis",
+        "balance": 1000.0,
+        "type": "PAYMENT"
+      },
+      "authorization": "READ"
+    },
+    {
+      "id": "poa-2",
+      "grantorName": "Cheddar Dincer Tanis",
+      "granteeName": "Merkur Dincer Tanis",
+      "account": {
+        "accountNumber": "NL91RABO1234567890",
+        "accountHolderName": "Cheddar Dincer Tanis",
+        "balance": 1000.0,
+        "type": "SAVINGS"
+      },
+      "authorization": "READ"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 2,
+    "sort": {
+      "empty": true,
+      "unsorted": true,
+      "sorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalPages": 1,
+  "totalElements": 2,
+  "size": 2,
+  "number": 0,
+  "sort": {
+    "empty": true,
+    "unsorted": true,
+    "sorted": false
+  },
+  "numberOfElements": 2,
+  "first": true,
+  "empty": false
+}

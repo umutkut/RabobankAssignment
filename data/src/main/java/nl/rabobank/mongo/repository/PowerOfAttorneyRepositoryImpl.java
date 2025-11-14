@@ -10,6 +10,9 @@ import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 import nl.rabobank.mongo.mapper.AccountMapper;
 import nl.rabobank.mongo.mapper.PowerOfAttorneyMapper;
 import nl.rabobank.repository.PowerOfAttorneyRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,27 +26,32 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
     private final PowerOfAttorneyMongoClient powerOfAttorneyMongoClient;
     private final AccountMongoClient accountMongoClient;
 
+    @Override
     public PowerOfAttorney save(PowerOfAttorney powerOfAttorney) {
         val document = PowerOfAttorneyMapper.toDocument(powerOfAttorney);
         val savedDocument = powerOfAttorneyMongoClient.save(document);
         return PowerOfAttorneyMapper.toDomain(savedDocument, powerOfAttorney.getAccount());
     }
 
+    @Override
     public Optional<PowerOfAttorney> findById(String id) {
         val optPoaDocument = powerOfAttorneyMongoClient.findById(id);
         return mapOptionalPoaDocToDomain(optPoaDocument);
     }
 
-    public List<PowerOfAttorney> findActiveByGranteeName(String granteeName) {
-        val poaDocuments = powerOfAttorneyMongoClient.findByGranteeName(granteeName);
-        return mapListOfPoaDocsToDomain(poaDocuments);
+    @Override
+    public Page<PowerOfAttorney> findByGranteeName(String granteeName, Pageable pageable) {
+        val page = powerOfAttorneyMongoClient.findByGranteeName(granteeName, pageable);
+        val content = mapListOfPoaDocsToDomain(page.getContent());
+        return new PageImpl<>(content, pageable, page.getTotalElements());
     }
 
-    public List<PowerOfAttorney> findActiveByGrantorName(String grantorName) {
+    public List<PowerOfAttorney> findByGrantorName(String grantorName) {
         val poaDocuments = powerOfAttorneyMongoClient.findByGrantorName(grantorName);
         return mapListOfPoaDocsToDomain(poaDocuments);
     }
 
+    @Override
     public Optional<PowerOfAttorney> findByGrantorAndGranteeAndAccountNumber(String grantor, String grantee, String accountNumber) {
         val paoDocument = powerOfAttorneyMongoClient.findByGrantorNameAndGranteeNameAndAccountNumber(grantor, grantee, accountNumber);
         return mapOptionalPoaDocToDomain(paoDocument);

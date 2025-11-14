@@ -1,6 +1,7 @@
-package nl.rabobank.controller;
+package nl.rabobank;
 
 import nl.rabobank.account.PaymentAccount;
+import nl.rabobank.account.SavingsAccount;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import org.springframework.core.io.ClassPathResource;
@@ -33,6 +34,14 @@ public class TestUtils {
 
     public static PaymentAccount givenPaymentAccount() {
         return new PaymentAccount(
+                ACCOUNT_NUMBER,
+                GRANTOR,
+                BALANCE
+        );
+    }
+
+    public static SavingsAccount givenSavingsAccount() {
+        return new SavingsAccount(
                 ACCOUNT_NUMBER,
                 GRANTOR,
                 BALANCE

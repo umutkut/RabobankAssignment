@@ -40,13 +40,13 @@ POST /api/v1/power-of-attorney
 ### Get Accounts by Grantee
 GET /api/v1/power-of-attorney/accounts?requester={requesterName}&page={num}&size={size}
 - Returns paginated list of all PoAs for a grantee
-- Default page size: 20
+- Default page size: 5
 - Default sorting: by accountNumber
 
 ### Get Accounts by Grantor
 GET /api/v1/power-of-attorney/accounts/granted/{requesterName}&page={num}&size={size}
 - Returns all PoAs created by a grantor
-- Default page size: 20
+- Default page size: 5
 - Default sorting: by accountNumber
 
 ### Get Specific Account
