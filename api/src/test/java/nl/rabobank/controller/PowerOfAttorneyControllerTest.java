@@ -5,6 +5,7 @@ import lombok.val;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.controller.advice.GlobalControllerAdvice;
 import nl.rabobank.exception.AccountNotFoundException;
+import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
 import nl.rabobank.exception.UnsupportedUserOperationException;
 import nl.rabobank.service.CreatePowerOfAttorneyService;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
@@ -81,7 +82,7 @@ class PowerOfAttorneyControllerTest {
     void create_unsupportedOperation() throws Exception {
         //Given
         when(createPowerOfAttorneyService.create(any(CreatePowerOfAttorneyServiceRequest.class)))
-                .thenThrow(new UnsupportedUserOperationException(GRANTOR + " is not owner of the requested account."));
+                .thenThrow(new UnsupportedUserOperationException("Some other grantor is not owner of the requested account."));
 
         val request = new CreatePowerOfAttorneyServiceRequest(GRANTOR, GRANTEE, ACCOUNT_NUMBER, Authorization.READ);
 
@@ -92,6 +93,24 @@ class PowerOfAttorneyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
+                .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+    }
+
+    @Test
+    void create_poaAlreadyExists() throws Exception {
+        //Given
+        when(createPowerOfAttorneyService.create(any(CreatePowerOfAttorneyServiceRequest.class)))
+                .thenThrow(new PowerOfAttorneyAlreadyExistException());
+
+        val request = new CreatePowerOfAttorneyServiceRequest(GRANTOR, GRANTEE, ACCOUNT_NUMBER, Authorization.READ);
+
+        val expectedJson = readStringFromFile("controller/poa_already_exists.json");
+
+        //When and Then
+        mockMvc.perform(post(POA_API_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
 }

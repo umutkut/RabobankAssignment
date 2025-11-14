@@ -124,7 +124,7 @@ class PowerOfAttorneyRepositoryImplTest {
     }
 
     @Test
-    void findByGranteeName_shouldJoinAccountsAndMapAll() {
+    void findActiveByGranteeName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
         val d2 = givenPowerOfAttorneyDocument().toBuilder().id("id-2").accountNumber(OTHER_ACCOUNT_NUMBER).build();
@@ -138,7 +138,7 @@ class PowerOfAttorneyRepositoryImplTest {
                 .thenReturn(List.of(a1, a2));
 
         // When
-        val result = service.findByGranteeName(GRANTEE);
+        val result = service.findActiveByGranteeName(GRANTEE);
 
         // Then
         assertEquals(2, result.size());
@@ -152,7 +152,7 @@ class PowerOfAttorneyRepositoryImplTest {
     }
 
     @Test
-    void findByGrantorName_shouldJoinAccountsAndMapAll() {
+    void findActiveByGrantorName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
         when(powerOfAttorneyMongoClient.findByGrantorNameAndRevokedFalse(GRANTOR))
@@ -163,7 +163,7 @@ class PowerOfAttorneyRepositoryImplTest {
                 .thenReturn(List.of(a1));
 
         // When
-        val result = service.findByGrantorName(GRANTOR);
+        val result = service.findActiveByGrantorName(GRANTOR);
 
         // Then
         assertEquals(1, result.size());

@@ -5,13 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.AccountNotFoundException;
+import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
 import nl.rabobank.exception.UnsupportedUserOperationException;
 import nl.rabobank.repository.AccountRepository;
 import nl.rabobank.repository.PowerOfAttorneyRepository;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -27,9 +26,17 @@ public class CreatePowerOfAttorneyService {
                 .findByAccountNumber(request.accountNumber())
                 .orElseThrow(() -> new AccountNotFoundException("With accountNumber: " + request.accountNumber()));
 
-        if (!Objects.equals(account.getAccountHolderName(), request.grantorName())) {
-            throw new UnsupportedUserOperationException(request.grantorName() + "is not owner of the requested account.");
+        if (!account.getAccountHolderName().equals(request.grantorName())) {
+            throw new UnsupportedUserOperationException(request.grantorName() + " is not owner of the requested account.");
         }
+
+        powerOfAttorneyRepository
+                .findByGrantorAndGranteeAndAccountNumber(request.grantorName(),
+                        request.granteeName(),
+                        request.accountNumber())
+                .ifPresent(poa -> {
+                    throw new PowerOfAttorneyAlreadyExistException();
+                });
 
         val powerOfAttorney = PowerOfAttorney.builder()
                 .id(idGenerator.generateUUID())

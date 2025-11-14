@@ -8,4 +8,6 @@ public interface PowerOfAttorneyRepository {
     PowerOfAttorney save(PowerOfAttorney powerOfAttorney);
 
     Optional<PowerOfAttorney> findById(String id);
+
+    Optional<PowerOfAttorney> findByGrantorAndGranteeAndAccountNumber(String grantor, String grantee, String accountNumber);
 }

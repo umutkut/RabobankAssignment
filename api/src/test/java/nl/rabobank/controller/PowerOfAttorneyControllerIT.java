@@ -92,7 +92,7 @@ class PowerOfAttorneyControllerIT {
         var account = givenPaymentAccount();
         when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
 
-        val request = new CreatePowerOfAttorneyServiceRequest(GRANTOR, GRANTEE, ACCOUNT_NUMBER, Authorization.READ);
+        val request = new CreatePowerOfAttorneyServiceRequest("Some other grantor", GRANTEE, ACCOUNT_NUMBER, Authorization.READ);
 
         val expectedJson = readStringFromFile("controller/unsupported_operation.json");
 

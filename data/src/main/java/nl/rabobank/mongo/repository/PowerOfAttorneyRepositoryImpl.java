@@ -31,26 +31,22 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
 
     public Optional<PowerOfAttorney> findById(String id) {
         val optPoaDocument = powerOfAttorneyMongoClient.findById(id);
-        if (optPoaDocument.isEmpty()) {
-            return Optional.empty();
-        }
-        val poaDocument = optPoaDocument.get();
-
-        val optAccountDoc = accountMongoClient.findById(poaDocument.getAccountNumber());
-        return optAccountDoc.map(accountDoc -> PowerOfAttorneyMapper.toDomain(
-                poaDocument,
-                AccountMapper.toDomain(accountDoc)
-        ));
+        return mapOptionalPoaDocToDomain(optPoaDocument);
     }
 
-    public List<PowerOfAttorney> findByGranteeName(String granteeName) {
+    public List<PowerOfAttorney> findActiveByGranteeName(String granteeName) {
         val poaDocuments = powerOfAttorneyMongoClient.findByGranteeNameAndRevokedFalse(granteeName);
         return mapListOfPoaDocsToDomain(poaDocuments);
     }
 
-    public List<PowerOfAttorney> findByGrantorName(String grantorName) {
+    public List<PowerOfAttorney> findActiveByGrantorName(String grantorName) {
         val poaDocuments = powerOfAttorneyMongoClient.findByGrantorNameAndRevokedFalse(grantorName);
         return mapListOfPoaDocsToDomain(poaDocuments);
+    }
+
+    public Optional<PowerOfAttorney> findByGrantorAndGranteeAndAccountNumber(String grantor, String grantee, String accountNumber) {
+        val paoDocument = powerOfAttorneyMongoClient.findByGrantorNameAndGranteeNameAndAccountNumber(grantor, grantee, accountNumber);
+        return mapOptionalPoaDocToDomain(paoDocument);
     }
 
     private List<PowerOfAttorney> mapListOfPoaDocsToDomain(List<PowerOfAttorneyDocument> poaDocuments) {
@@ -65,6 +61,19 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
             val account = accountNumberAccountMap.get(document.getAccountNumber());
             return PowerOfAttorneyMapper.toDomain(document, account);
         }).toList();
+    }
+
+    private Optional<PowerOfAttorney> mapOptionalPoaDocToDomain(Optional<PowerOfAttorneyDocument> optPoaDocument) {
+        if (optPoaDocument.isEmpty()) {
+            return Optional.empty();
+        }
+        val poaDocument = optPoaDocument.get();
+
+        val optAccountDoc = accountMongoClient.findById(poaDocument.getAccountNumber());
+        return optAccountDoc.map(accountDoc -> PowerOfAttorneyMapper.toDomain(
+                poaDocument,
+                AccountMapper.toDomain(accountDoc)
+        ));
     }
 }
 
