@@ -3,6 +3,7 @@ package nl.rabobank.controller.advice;
 import nl.rabobank.controller.model.ErrorResponse;
 import nl.rabobank.exception.AccountNotFoundException;
 import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
+import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
 import nl.rabobank.exception.UnsupportedUserOperationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,10 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(PowerOfAttorneyAlreadyExistException.class)
     public ResponseEntity<ErrorResponse> handlePoaAlreadyExists(PowerOfAttorneyAlreadyExistException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(PowerOfAttorneyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePoaNotFound(PowerOfAttorneyNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
     }
 }
