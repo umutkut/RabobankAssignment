@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import nl.rabobank.controller.model.PowerOfAttorneyAPIResponse;
 import nl.rabobank.service.CreatePowerOfAttorneyService;
-import nl.rabobank.service.GetAccessibleAccountsService;
+import nl.rabobank.service.GetGranteePowerOfAttorneyService;
+import nl.rabobank.service.GetGrantorPowerOfAttorneyService;
 import nl.rabobank.service.GetPowerOfAttorneyByIdService;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,8 @@ public class PowerOfAttorneyController {
 
     private final CreatePowerOfAttorneyService createPowerOfAttorneyService;
     private final GetPowerOfAttorneyByIdService getPowerOfAttorneyByIdService;
-    private final GetAccessibleAccountsService getAccessibleAccountsService;
+    private final GetGranteePowerOfAttorneyService getGranteePowerOfAttorneyService;
+    private final GetGrantorPowerOfAttorneyService getGrantorPowerOfAttorneyService;
 
     @PostMapping
     public ResponseEntity<PowerOfAttorneyAPIResponse> create(@RequestBody CreatePowerOfAttorneyServiceRequest request) {
@@ -41,7 +43,16 @@ public class PowerOfAttorneyController {
     public ResponseEntity<Page<PowerOfAttorneyAPIResponse>> listByGrantee(
             @PathVariable("granteeName") String granteeName,
             @PageableDefault(sort = "accountNumber", size = 5) Pageable pageable) {
-        val poas = getAccessibleAccountsService.listPoasForUser(granteeName, pageable);
+        val poas = getGranteePowerOfAttorneyService.listPoasForUser(granteeName, pageable);
+        val body = poas.map(PowerOfAttorneyAPIResponse::from);
+        return ResponseEntity.ok(body);
+    }
+
+    @GetMapping("/grantor/{grantorName}")
+    public ResponseEntity<Page<PowerOfAttorneyAPIResponse>> listByGrantor(
+            @PathVariable("grantorName") String grantorName,
+            @PageableDefault(sort = "accountNumber", size = 5) Pageable pageable) {
+        val poas = getGrantorPowerOfAttorneyService.listPoasForGrantor(grantorName, pageable);
         val body = poas.map(PowerOfAttorneyAPIResponse::from);
         return ResponseEntity.ok(body);
     }

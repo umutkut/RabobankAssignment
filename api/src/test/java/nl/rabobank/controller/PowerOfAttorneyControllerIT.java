@@ -123,10 +123,31 @@ class PowerOfAttorneyControllerIT {
         when(powerOfAttorneyRepository.findByGranteeName(eq(GRANTEE), any(Pageable.class)))
                 .thenReturn(page);
 
-        val expectedJson = readStringFromFile("controller/poas_by_grantee_page0_size2.json");
+        val expectedJson = readStringFromFile("controller/poas_paginated.json");
 
         // When & Then
         mockMvc.perform(get(POA_API_PATH + "/grantee/" + GRANTEE + "?page=0&size=2"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+    }
+
+    @Test
+    void listByGrantor_success_withPagination() throws Exception {
+        // Given
+        val poa1 = givenPowerOfAttorney();
+        val poa2 = givenPowerOfAttorney().toBuilder()
+                .id("poa-2")
+                .account(givenSavingsAccount())
+                .build();
+        val pageable = PageRequest.of(0, 2);
+        val page = new PageImpl<>(List.of(poa1, poa2), pageable, 2);
+        when(powerOfAttorneyRepository.findByGrantorName(eq(GRANTOR), any(Pageable.class)))
+                .thenReturn(page);
+
+        val expectedJson = readStringFromFile("controller/poas_paginated.json");
+
+        // When and then
+        mockMvc.perform(get(POA_API_PATH + "/grantor/" + GRANTOR + "?page=0&size=2"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }

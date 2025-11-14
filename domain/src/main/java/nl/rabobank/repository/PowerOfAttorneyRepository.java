@@ -14,4 +14,6 @@ public interface PowerOfAttorneyRepository {
     Optional<PowerOfAttorney> findByGrantorAndGranteeAndAccountNumber(String grantor, String grantee, String accountNumber);
 
     Page<PowerOfAttorney> findByGranteeName(String granteeName, Pageable pageable);
+
+    Page<PowerOfAttorney> findByGrantorName(String grantorName, Pageable pageable);
 }

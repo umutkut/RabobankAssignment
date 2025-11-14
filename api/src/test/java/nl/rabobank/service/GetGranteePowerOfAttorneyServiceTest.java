@@ -20,13 +20,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetAccessibleAccountsServiceTest {
+class GetGranteePowerOfAttorneyServiceTest {
 
     @Mock
     PowerOfAttorneyRepository powerOfAttorneyRepository;
 
     @InjectMocks
-    GetAccessibleAccountsService service;
+    GetGranteePowerOfAttorneyService service;
 
     @Test
     void listPoasForUser_appliesPaginationAndOrder() {

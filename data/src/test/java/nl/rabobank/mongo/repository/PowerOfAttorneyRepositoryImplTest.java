@@ -160,15 +160,18 @@ class PowerOfAttorneyRepositoryImplTest {
     void findByGrantorName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
-        when(powerOfAttorneyMongoClient.findByGrantorName(GRANTOR))
-                .thenReturn(List.of(d1));
+        val pageable = PageRequest.of(0, 10);
+        val page = new PageImpl<>(List.of(d1), pageable, 1);
+        when(powerOfAttorneyMongoClient.findByGrantorName(GRANTOR, pageable))
+                .thenReturn(page);
 
         val a1 = givenPaymentAccountDocument();
         when(accountMongoClient.findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER)))
                 .thenReturn(List.of(a1));
 
         // When
-        val result = service.findByGrantorName(GRANTOR);
+        val resultPage = service.findByGrantorName(GRANTOR, pageable);
+        val result = resultPage.getContent();
 
         // Then
         assertEquals(1, result.size());
@@ -178,7 +181,7 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(ACCOUNT_NUMBER, poa.getAccount().getAccountNumber());
         assertEquals(Authorization.READ, poa.getAuthorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorName(GRANTOR);
+        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorName(GRANTOR, pageable);
         verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER));
     }
 

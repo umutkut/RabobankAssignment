@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GetAccessibleAccountsService {
+public class GetGranteePowerOfAttorneyService {
 
     private final PowerOfAttorneyRepository powerOfAttorneyRepository;
 
