@@ -9,7 +9,7 @@ import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
 import nl.rabobank.exception.UnsupportedUserOperationException;
 import nl.rabobank.service.CreatePowerOfAttorneyService;
-import nl.rabobank.service.GetPowerOfAttorneyService;
+import nl.rabobank.service.GetPowerOfAttorneyByIdService;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ class PowerOfAttorneyControllerTest {
     CreatePowerOfAttorneyService createPowerOfAttorneyService;
 
     @MockitoBean
-    GetPowerOfAttorneyService getPowerOfAttorneyService;
+    GetPowerOfAttorneyByIdService getPowerOfAttorneyByIdService;
 
     @Test
     void create_success() throws Exception {
@@ -123,7 +123,7 @@ class PowerOfAttorneyControllerTest {
     void getById_success() throws Exception {
         // Given
         val poa = givenPowerOfAttorney();
-        when(getPowerOfAttorneyService.getById(POA_ID)).thenReturn(poa);
+        when(getPowerOfAttorneyByIdService.getById(POA_ID)).thenReturn(poa);
         val expectedJson = readStringFromFile("controller/create_success.json");
 
         // When & Then
@@ -135,7 +135,7 @@ class PowerOfAttorneyControllerTest {
     @Test
     void getById_notFound() throws Exception {
         // Given
-        when(getPowerOfAttorneyService.getById(POA_ID)).thenThrow(new PowerOfAttorneyNotFoundException("With id: " + POA_ID));
+        when(getPowerOfAttorneyByIdService.getById(POA_ID)).thenThrow(new PowerOfAttorneyNotFoundException("With id: " + POA_ID));
         val expectedJson = readStringFromFile("controller/poa_not_found.json");
 
         // When & Then

@@ -3,7 +3,7 @@ package nl.rabobank.controller;
 import lombok.RequiredArgsConstructor;
 import nl.rabobank.controller.model.PowerOfAttorneyAPIResponse;
 import nl.rabobank.service.CreatePowerOfAttorneyService;
-import nl.rabobank.service.GetPowerOfAttorneyService;
+import nl.rabobank.service.GetPowerOfAttorneyByIdService;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.net.URI;
 public class PowerOfAttorneyController {
 
     private final CreatePowerOfAttorneyService createPowerOfAttorneyService;
-    private final GetPowerOfAttorneyService getPowerOfAttorneyService;
+    private final GetPowerOfAttorneyByIdService getPowerOfAttorneyByIdService;
 
     @PostMapping
     public ResponseEntity<PowerOfAttorneyAPIResponse> create(@RequestBody CreatePowerOfAttorneyServiceRequest request) {
@@ -27,7 +27,7 @@ public class PowerOfAttorneyController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PowerOfAttorneyAPIResponse> getById(@PathVariable("id") String id) {
-        var poa = getPowerOfAttorneyService.getById(id);
+        var poa = getPowerOfAttorneyByIdService.getById(id);
         return ResponseEntity.ok(PowerOfAttorneyAPIResponse.from(poa));
     }
 }

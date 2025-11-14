@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetPowerOfAttorneyServiceTest {
+class GetPowerOfAttorneyByIdServiceTest {
 
     @Mock
     private PowerOfAttorneyRepository powerOfAttorneyRepository;
 
     @InjectMocks
-    private GetPowerOfAttorneyService service;
+    private GetPowerOfAttorneyByIdService service;
 
     @Test
     void getById_shouldReturnPoa_whenExists() {
