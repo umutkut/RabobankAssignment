@@ -8,7 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Document(collection = "power_of_attorney")
 @Data
@@ -30,6 +30,7 @@ public class PowerOfAttorneyDocument {
 
     private AuthorizationType authorizationType;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime lastModifiedAt;
+    private Instant createdAt;
+
+    private Instant updatedAt;
 }

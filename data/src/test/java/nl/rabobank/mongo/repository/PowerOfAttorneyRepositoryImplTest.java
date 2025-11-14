@@ -56,10 +56,10 @@ class PowerOfAttorneyRepositoryImplTest {
 
         // Then
         assertNotNull(result);
-        assertEquals(GRANTOR, result.getGrantorName());
-        assertEquals(GRANTEE, result.getGranteeName());
-        assertEquals(account, result.getAccount());
-        assertEquals(Authorization.READ, result.getAuthorization());
+        assertEquals(GRANTOR, result.grantorName());
+        assertEquals(GRANTEE, result.granteeName());
+        assertEquals(account, result.account());
+        assertEquals(Authorization.READ, result.authorization());
 
         val poaCaptor = ArgumentCaptor.forClass(PowerOfAttorneyDocument.class);
         verify(powerOfAttorneyMongoClient, times(1)).save(poaCaptor.capture());
@@ -101,10 +101,10 @@ class PowerOfAttorneyRepositoryImplTest {
         // Then
         assertTrue(result.isPresent());
         val poa = result.get();
-        assertEquals(GRANTOR, poa.getGrantorName());
-        assertEquals(GRANTEE, poa.getGranteeName());
-        assertEquals(ACCOUNT_NUMBER, poa.getAccount().getAccountNumber());
-        assertEquals(Authorization.READ, poa.getAuthorization());
+        assertEquals(GRANTOR, poa.grantorName());
+        assertEquals(GRANTEE, poa.granteeName());
+        assertEquals(ACCOUNT_NUMBER, poa.account().getAccountNumber());
+        assertEquals(Authorization.READ, poa.authorization());
 
         verify(powerOfAttorneyMongoClient, times(1)).findById(POA_ID);
         verify(accountMongoClient, times(1)).findById(ACCOUNT_NUMBER);
@@ -146,10 +146,10 @@ class PowerOfAttorneyRepositoryImplTest {
 
         // Then
         assertEquals(2, result.size());
-        assertEquals(ACCOUNT_NUMBER, result.get(0).getAccount().getAccountNumber());
-        assertEquals(Authorization.READ, result.get(0).getAuthorization());
-        assertEquals(OTHER_ACCOUNT_NUMBER, result.get(1).getAccount().getAccountNumber());
-        assertEquals(Authorization.READ, result.get(1).getAuthorization());
+        assertEquals(ACCOUNT_NUMBER, result.get(0).account().getAccountNumber());
+        assertEquals(Authorization.READ, result.get(0).authorization());
+        assertEquals(OTHER_ACCOUNT_NUMBER, result.get(1).account().getAccountNumber());
+        assertEquals(Authorization.READ, result.get(1).authorization());
         assertEquals(2, resultPage.getTotalElements());
 
         verify(powerOfAttorneyMongoClient, times(1)).findByGranteeName(GRANTEE, pageable);
@@ -176,10 +176,10 @@ class PowerOfAttorneyRepositoryImplTest {
         // Then
         assertEquals(1, result.size());
         val poa = result.getFirst();
-        assertEquals(GRANTOR, poa.getGrantorName());
-        assertEquals(GRANTEE, poa.getGranteeName());
-        assertEquals(ACCOUNT_NUMBER, poa.getAccount().getAccountNumber());
-        assertEquals(Authorization.READ, poa.getAuthorization());
+        assertEquals(GRANTOR, poa.grantorName());
+        assertEquals(GRANTEE, poa.granteeName());
+        assertEquals(ACCOUNT_NUMBER, poa.account().getAccountNumber());
+        assertEquals(Authorization.READ, poa.authorization());
 
         verify(powerOfAttorneyMongoClient, times(1)).findByGrantorName(GRANTOR, pageable);
         verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER));

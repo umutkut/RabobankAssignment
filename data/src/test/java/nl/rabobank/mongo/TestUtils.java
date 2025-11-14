@@ -9,7 +9,7 @@ import nl.rabobank.mongo.documents.account.SavingsAccountDocument;
 import nl.rabobank.mongo.documents.poa.AuthorizationType;
 import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public class TestUtils {
     public static final String ACCOUNT_NUMBER = "NL91RABO1234567890";
@@ -18,6 +18,8 @@ public class TestUtils {
     public static final String GRANTEE = "Merkur Dincer Tanis";
     public static final String POA_ID = "id-1";
     public static final Double BALANCE = 1000.0;
+    public static final Instant CREATED_AT = Instant.parse("2024-01-01T00:00:00Z");
+    public static final Instant UPDATED_AT = Instant.parse("2024-01-02T00:00:00Z");
 
     public static PaymentAccount givenPaymentAccount() {
         return new PaymentAccount(
@@ -58,7 +60,8 @@ public class TestUtils {
                 .granteeName(GRANTEE)
                 .accountNumber(ACCOUNT_NUMBER)
                 .authorizationType(AuthorizationType.READ)
-                .createdAt(LocalDateTime.now())
+                .createdAt(CREATED_AT)
+                .updatedAt(UPDATED_AT)
                 .build();
     }
 
@@ -69,6 +72,8 @@ public class TestUtils {
                 .granteeName(GRANTEE)
                 .account(givenPaymentAccount())
                 .authorization(Authorization.READ)
+                .createdAt(CREATED_AT)
+                .updatedAt(UPDATED_AT)
                 .build();
     }
 }

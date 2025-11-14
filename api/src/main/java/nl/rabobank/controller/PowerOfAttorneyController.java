@@ -2,12 +2,11 @@ package nl.rabobank.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.controller.model.PowerOfAttorneyAPIResponse;
-import nl.rabobank.service.CreatePowerOfAttorneyService;
-import nl.rabobank.service.GetGranteePowerOfAttorneyService;
-import nl.rabobank.service.GetGrantorPowerOfAttorneyService;
-import nl.rabobank.service.GetPowerOfAttorneyByIdService;
+import nl.rabobank.service.*;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
+import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,17 +24,25 @@ public class PowerOfAttorneyController {
     private final GetPowerOfAttorneyByIdService getPowerOfAttorneyByIdService;
     private final GetGranteePowerOfAttorneyService getGranteePowerOfAttorneyService;
     private final GetGrantorPowerOfAttorneyService getGrantorPowerOfAttorneyService;
+    private final UpdatePowerOfAttorneyAuthorizationService updatePowerOfAttorneyAuthorizationService;
 
     @PostMapping
     public ResponseEntity<PowerOfAttorneyAPIResponse> create(@RequestBody CreatePowerOfAttorneyServiceRequest request) {
         val poa = createPowerOfAttorneyService.create(request);
-        URI location = URI.create("/api/v1/power-of-attorney/" + poa.getId());
+        URI location = URI.create("/api/v1/power-of-attorney/" + poa.id());
         return ResponseEntity.created(location).body(PowerOfAttorneyAPIResponse.from(poa));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PowerOfAttorneyAPIResponse> getById(@PathVariable("id") String id) {
         val poa = getPowerOfAttorneyByIdService.getById(id);
+        return ResponseEntity.ok(PowerOfAttorneyAPIResponse.from(poa));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PowerOfAttorneyAPIResponse> updateAuthorization(@PathVariable("id") String id,
+                                                                          @RequestParam("authorization") String authorization) {
+        val poa = updatePowerOfAttorneyAuthorizationService.updateAuthorization(new UpdatePowerOfAttorneyAuthorizationRequest(id, Authorization.valueOf(authorization)));
         return ResponseEntity.ok(PowerOfAttorneyAPIResponse.from(poa));
     }
 

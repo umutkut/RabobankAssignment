@@ -5,14 +5,10 @@ import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.mongo.documents.poa.AuthorizationType;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
 import static nl.rabobank.mongo.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PowerOfAttorneyMapperTest {
-
-
 
     @Test
     void shouldNotInstantiateUtilityClass() {
@@ -26,9 +22,7 @@ class PowerOfAttorneyMapperTest {
         val powerOfAttorney = givenPowerOfAttorney();
 
         // When
-        val beforeCreation = LocalDateTime.now();
         val document = PowerOfAttorneyMapper.toDocument(powerOfAttorney);
-        val afterCreation = LocalDateTime.now();
 
         // Then
         assertNotNull(document);
@@ -37,9 +31,8 @@ class PowerOfAttorneyMapperTest {
         assertEquals(GRANTEE, document.getGranteeName());
         assertEquals(ACCOUNT_NUMBER, document.getAccountNumber());
         assertEquals(AuthorizationType.READ, document.getAuthorizationType());
-        assertNotNull(document.getCreatedAt());
-        assertTrue(document.getCreatedAt().isAfter(beforeCreation.minusSeconds(1)));
-        assertTrue(document.getCreatedAt().isBefore(afterCreation.plusSeconds(1)));
+        assertEquals(CREATED_AT, document.getCreatedAt());
+        assertEquals(UPDATED_AT, document.getUpdatedAt());
     }
 
     @Test
@@ -53,14 +46,15 @@ class PowerOfAttorneyMapperTest {
 
         // Then
         assertNotNull(powerOfAttorney);
-        assertEquals(POA_ID, powerOfAttorney.getId());
-        assertEquals(GRANTOR, powerOfAttorney.getGrantorName());
-        assertEquals(GRANTEE, powerOfAttorney.getGranteeName());
-        assertEquals(account, powerOfAttorney.getAccount());
-        assertEquals(ACCOUNT_NUMBER, powerOfAttorney.getAccount().getAccountNumber());
-        assertEquals(Authorization.READ, powerOfAttorney.getAuthorization());
+        assertEquals(POA_ID, powerOfAttorney.id());
+        assertEquals(GRANTOR, powerOfAttorney.grantorName());
+        assertEquals(GRANTEE, powerOfAttorney.granteeName());
+        assertEquals(account, powerOfAttorney.account());
+        assertEquals(ACCOUNT_NUMBER, powerOfAttorney.account().getAccountNumber());
+        assertEquals(Authorization.READ, powerOfAttorney.authorization());
+        assertEquals(CREATED_AT, powerOfAttorney.createdAt());
+        assertEquals(UPDATED_AT, powerOfAttorney.updatedAt());
     }
-
 
     @Test
     void shouldPreserveAllFieldsInRoundTripConversion() {
@@ -73,12 +67,14 @@ class PowerOfAttorneyMapperTest {
         val reconvertedPowerOfAttorney = PowerOfAttorneyMapper.toDomain(document, account);
 
         // Then
-        assertEquals(originalPowerOfAttorney.getId(), reconvertedPowerOfAttorney.getId());
-        assertEquals(originalPowerOfAttorney.getGrantorName(), reconvertedPowerOfAttorney.getGrantorName());
-        assertEquals(originalPowerOfAttorney.getGranteeName(), reconvertedPowerOfAttorney.getGranteeName());
-        assertEquals(originalPowerOfAttorney.getAccount().getAccountNumber(),
-                reconvertedPowerOfAttorney.getAccount().getAccountNumber());
-        assertEquals(originalPowerOfAttorney.getAuthorization(), reconvertedPowerOfAttorney.getAuthorization());
+        assertEquals(originalPowerOfAttorney.id(), reconvertedPowerOfAttorney.id());
+        assertEquals(originalPowerOfAttorney.grantorName(), reconvertedPowerOfAttorney.grantorName());
+        assertEquals(originalPowerOfAttorney.granteeName(), reconvertedPowerOfAttorney.granteeName());
+        assertEquals(originalPowerOfAttorney.account().getAccountNumber(),
+                reconvertedPowerOfAttorney.account().getAccountNumber());
+        assertEquals(originalPowerOfAttorney.authorization(), reconvertedPowerOfAttorney.authorization());
+        assertEquals(originalPowerOfAttorney.createdAt(), reconvertedPowerOfAttorney.createdAt());
+        assertEquals(originalPowerOfAttorney.updatedAt(), reconvertedPowerOfAttorney.updatedAt());
     }
 }
 

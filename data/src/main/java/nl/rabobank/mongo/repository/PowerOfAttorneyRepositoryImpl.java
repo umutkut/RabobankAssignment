@@ -30,7 +30,7 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
     public PowerOfAttorney save(PowerOfAttorney powerOfAttorney) {
         val document = PowerOfAttorneyMapper.toDocument(powerOfAttorney);
         val savedDocument = powerOfAttorneyMongoClient.save(document);
-        return PowerOfAttorneyMapper.toDomain(savedDocument, powerOfAttorney.getAccount());
+        return PowerOfAttorneyMapper.toDomain(savedDocument, powerOfAttorney.account());
     }
 
     @Override

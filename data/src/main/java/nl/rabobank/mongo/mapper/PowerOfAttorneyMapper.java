@@ -6,8 +6,6 @@ import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.mongo.documents.poa.AuthorizationType;
 import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 
-import java.time.LocalDateTime;
-
 public class PowerOfAttorneyMapper {
     PowerOfAttorneyMapper() {
         throw new IllegalStateException("Utility class");
@@ -15,12 +13,13 @@ public class PowerOfAttorneyMapper {
 
     public static PowerOfAttorneyDocument toDocument(PowerOfAttorney powerOfAttorney) {
         return PowerOfAttorneyDocument.builder()
-                .id(powerOfAttorney.getId())
-                .grantorName(powerOfAttorney.getGrantorName())
-                .granteeName(powerOfAttorney.getGranteeName())
-                .accountNumber(powerOfAttorney.getAccount().getAccountNumber())
-                .authorizationType(mapToAuthorizationType(powerOfAttorney.getAuthorization()))
-                .createdAt(LocalDateTime.now())
+                .id(powerOfAttorney.id())
+                .grantorName(powerOfAttorney.grantorName())
+                .granteeName(powerOfAttorney.granteeName())
+                .accountNumber(powerOfAttorney.account().getAccountNumber())
+                .authorizationType(mapToAuthorizationType(powerOfAttorney.authorization()))
+                .createdAt(powerOfAttorney.createdAt())
+                .updatedAt(powerOfAttorney.updatedAt())
                 .build();
     }
 
@@ -31,6 +30,8 @@ public class PowerOfAttorneyMapper {
                 .granteeName(document.getGranteeName())
                 .account(account)
                 .authorization(mapToAuthorization(document.getAuthorizationType()))
+                .createdAt(document.getCreatedAt())
+                .updatedAt(document.getUpdatedAt())
                 .build();
     }
 

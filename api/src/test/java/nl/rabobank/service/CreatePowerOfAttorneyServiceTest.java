@@ -58,11 +58,11 @@ class CreatePowerOfAttorneyServiceTest {
 
         // then
         assertNotNull(result);
-        assertEquals(POA_ID, result.getId());
-        assertEquals(GRANTEE, result.getGranteeName());
-        assertEquals(GRANTOR, result.getGrantorName());
-        assertEquals(account, result.getAccount());
-        assertEquals(Authorization.WRITE, result.getAuthorization());
+        assertEquals(POA_ID, result.id());
+        assertEquals(GRANTEE, result.granteeName());
+        assertEquals(GRANTOR, result.grantorName());
+        assertEquals(account, result.account());
+        assertEquals(Authorization.WRITE, result.authorization());
 
         verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
         verify(powerOfAttorneyRepository, times(1)).findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER);

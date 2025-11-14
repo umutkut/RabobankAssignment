@@ -8,11 +8,9 @@ import nl.rabobank.exception.AccountNotFoundException;
 import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
 import nl.rabobank.exception.UnsupportedUserOperationException;
-import nl.rabobank.service.CreatePowerOfAttorneyService;
-import nl.rabobank.service.GetGranteePowerOfAttorneyService;
-import nl.rabobank.service.GetGrantorPowerOfAttorneyService;
-import nl.rabobank.service.GetPowerOfAttorneyByIdService;
+import nl.rabobank.service.*;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
+import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,8 +29,7 @@ import static nl.rabobank.TestUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = PowerOfAttorneyController.class)
@@ -58,6 +55,9 @@ class PowerOfAttorneyControllerTest {
 
     @MockitoBean
     GetGrantorPowerOfAttorneyService getGrantorPowerOfAttorneyService;
+
+    @MockitoBean
+    UpdatePowerOfAttorneyAuthorizationService updatePowerOfAttorneyAuthorizationService;
 
     @Test
     void create_success() throws Exception {
@@ -197,6 +197,35 @@ class PowerOfAttorneyControllerTest {
         // When & Then
         mockMvc.perform(get(POA_API_PATH + "/grantor/" + GRANTOR + "?page=0&size=2"))
                 .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+    }
+
+    @Test
+    void updateAuthorization_success() throws Exception {
+        // Given
+        val updated = givenPowerOfAttorney().toBuilder().authorization(Authorization.WRITE).build();
+        when(updatePowerOfAttorneyAuthorizationService.updateAuthorization(any(UpdatePowerOfAttorneyAuthorizationRequest.class)))
+                .thenReturn(updated);
+
+        val expectedJson = readStringFromFile("controller/update_success.json");
+
+        // When & Then
+        mockMvc.perform(put(POA_API_PATH + "/" + POA_ID + "?authorization=WRITE"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+    }
+
+    @Test
+    void updateAuthorization_notFound() throws Exception {
+        // Given
+        when(updatePowerOfAttorneyAuthorizationService.updateAuthorization(any(UpdatePowerOfAttorneyAuthorizationRequest.class)))
+                .thenThrow(new PowerOfAttorneyNotFoundException("With id: " + POA_ID));
+
+        val expectedJson = readStringFromFile("controller/poa_not_found.json");
+
+        // When & Then
+        mockMvc.perform(put(POA_API_PATH + "/" + POA_ID + "?authorization=WRITE"))
+                .andExpect(status().isNotFound())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
 }

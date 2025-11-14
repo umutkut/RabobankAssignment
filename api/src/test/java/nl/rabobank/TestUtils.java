@@ -7,6 +7,7 @@ import nl.rabobank.authorizations.PowerOfAttorney;
 import org.springframework.core.io.ClassPathResource;
 
 import java.nio.file.Files;
+import java.time.Instant;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -16,6 +17,8 @@ public class TestUtils {
     public static final String GRANTEE = "Merkur Dincer Tanis";
     public static final String POA_ID = "0899c184-1e66-46b4-ae0a-5b8536d6356b";
     public static final Double BALANCE = 1000.0;
+    public static final Instant CREATED_AT = Instant.parse("2024-01-01T00:00:00Z");
+    public static final Instant UPDATED_AT = Instant.parse("2024-01-02T00:00:00Z");
 
     public static String readStringFromFile(String path) throws Exception {
         var resource = new ClassPathResource(path);
@@ -29,6 +32,8 @@ public class TestUtils {
                 .granteeName(GRANTEE)
                 .account(givenPaymentAccount())
                 .authorization(Authorization.READ)
+                .createdAt(CREATED_AT)
+                .updatedAt(UPDATED_AT)
                 .build();
     }
 

@@ -1,16 +1,18 @@
 package nl.rabobank.authorizations;
 
 import lombok.Builder;
-import lombok.Value;
 import nl.rabobank.account.Account;
 
-@Value
+import java.time.Instant;
+
 @Builder(toBuilder = true)
-public class PowerOfAttorney
-{
-    String id;
-    String granteeName;
-    String grantorName;
-    Account account;
-    Authorization authorization;
+public record PowerOfAttorney(
+        String id,
+        String granteeName,
+        String grantorName,
+        Account account,
+        Authorization authorization,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

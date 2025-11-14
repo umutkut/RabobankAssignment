@@ -12,6 +12,8 @@ import nl.rabobank.repository.PowerOfAttorneyRepository;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,16 +40,19 @@ public class CreatePowerOfAttorneyService {
                     throw new PowerOfAttorneyAlreadyExistException();
                 });
 
+        val now = Instant.now();
         val powerOfAttorney = PowerOfAttorney.builder()
                 .id(idGenerator.generateUUID())
                 .account(account)
                 .granteeName(request.granteeName())
                 .grantorName(request.grantorName())
                 .authorization(request.authorization())
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
         val savedPoa = powerOfAttorneyRepository.save(powerOfAttorney);
 
-        log.debug("Created POA for accountNumber: {}", savedPoa.getAccount().getAccountNumber());
+        log.debug("Created POA for accountNumber: {}", savedPoa.account().getAccountNumber());
         return savedPoa;
     }
 }

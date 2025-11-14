@@ -13,11 +13,11 @@ public record PowerOfAttorneyAPIResponse(
 ) {
     public static PowerOfAttorneyAPIResponse from(PowerOfAttorney poa) {
         return new PowerOfAttorneyAPIResponse(
-                poa.getId(),
-                poa.getGrantorName(),
-                poa.getGranteeName(),
-                AccountAPIResponse.from(poa.getAccount()),
-                poa.getAuthorization()
+                poa.id(),
+                poa.grantorName(),
+                poa.granteeName(),
+                AccountAPIResponse.from(poa.account()),
+                poa.authorization()
         );
     }
 }
