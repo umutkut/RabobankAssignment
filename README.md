@@ -1,40 +1,97 @@
-## Rabobank Assignment for Authorizations Area
+# Rabobank Authorizations (Power of Attorney)
 
-This project contains several premade modules for you to implement your code. We hope this helps you with ´what to put
-where´.
+A simplified Power of Attorney (PoA) service where a grantor can give a grantee Read or Write authorization on Payment
+or Savings accounts. Users can:
 
-### API
+- Create a new PoA (grant Read/Write on an account)
+- Retrieve the accounts they have access to
 
-This module is where you have to implement the API interface and connect the other two modules
+This repository is a Maven multi‑module project:
 
-### Data
+- domain: Pure domain model and repository interfaces (no Spring)
+- data: Spring Data MongoDB implementation
+- api: Spring MVC REST layer
 
-This module is where you implement all stateful Mongo data. We have provided an embedded Mongo configuration for you.
-You just need to design the data you need to store and the repositories to store or retrieve it with.
+## Prerequisites
 
-### Domain
+- Java 21 (ensure your JDK is 21; the build is configured for source/target 21)
+- Maven 3.9+
+- Docker (for local MongoDB via docker compose)
 
-This module represents the domain you will be working with. The domain module presents classes for the power of attorney
-model that contains a Read or Write authorization for a Payment or Savings account.
+## Build and Test
 
-## The task at hand
+- Full build (skip tests):
+  ```bash
+  mvn -q -DskipTests clean install
+  ```
+- Full build with tests:
+  ```bash
+  mvn clean verify
+  ```
+- Per-module (faster iteration):
+  ```bash
+  mvn -pl api test
+  mvn -pl data test
+  mvn -pl domain test
+  ```
 
-Implement the following business requirement
+## Run Locally
 
-- Users must be able to create write or read access for payments and savings accounts
-- Users need to be able to retrieve a list of accounts they have read or write access for
+### 1) Start MongoDB (Docker Compose)
 
-Boundaries
+From the repo root:
 
-- You can add dependencies as you like
-- You can design the data and API models as you like (what a dream, isn't it?)
+```bash
+docker compose up -d mongo
+```
 
-Notes
+This uses `docker-compose.yml` to start a local MongoDB 7 instance named `rabobank-mongo` on port `27017`, with default
+database `test`.
 
-- The code should be ready to go to production on delivery
+### 2) Load sample accounts (optional but recommended)
 
-## Background information
+From the repo root:
 
-A Power of Attorney is used when someone (grantor) wants to give access to his/her account to someone else (grantee). This
-could be read access or write access. In this way the grantee can read/write in the grantors account.
-Notice that this is a simplified version of reality.
+```bash
+bash scripts/load-accounts.sh
+```
+
+What it does:
+
+- Ensures the `rabobank-mongo` container is running (starts it if needed)
+- Copies `mock/accounts.json` into the container
+- Upserts into `test.accounts` via `mongoimport`
+- Prints the resulting document count
+
+### 3) Run the API
+
+From the repo root:
+
+```bash
+mvn spring-boot:run main-class=nl.rabobank.RaboAssignmentApplication
+```
+
+The data module defaults (see `data/src/main/resources/application.properties`):
+
+- `spring.data.mongodb.host=localhost`
+- `spring.data.mongodb.port=27017`
+- `spring.data.mongodb.database=test`
+
+Once started, the API listens on the default Spring Boot port (8081).
+
+## Try It Out
+
+- Import the Postman collection: `postman/PowerOfAttorney.postman_collection.json`
+- Point requests to your local server base URL
+
+## Repo Highlights
+
+- [ORIGINAL_ASSIGNMENT.md](ORIGINAL_ASSIGNMENT.md)`ORIGINAL_ASSIGNMENT.md`: original assignment brief
+- [docker-compose.yml](docker-compose.yml)`docker-compose.yml`: local MongoDB service definition
+- `scripts/`[load-accounts.sh](scripts/load-accounts.sh): helper to load mock accounts into Mongo
+- `mock/`[accounts.json](mock/accounts.json): sample accounts data
+- `postman/`[PowerOfAttorney.postman_collection.json](postman/PowerOfAttorney.postman_collection.json): requests to
+  exercise the API
+- [QUESTIONS.md](QUESTIONS.md): the questions raised before starting the assignments and self-given answers to clarify
+  the requirements
+- [REQUIREMENTS.md](REQUIREMENTS.md)

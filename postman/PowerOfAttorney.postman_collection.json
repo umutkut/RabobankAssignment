@@ -1,0 +1,202 @@
+{
+  "info": {
+    "name": "Rabobank Power of Attorney API",
+    "description": "Postman collection for the Power of Attorney Management API. Endpoints are based on api/src/main/java/nl/rabobank/controller/PowerOfAttorneyController.java.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Create Power of Attorney",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/power-of-attorney",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "power-of-attorney"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"grantorName\": \"{{grantorName}}\",\n  \"granteeName\": \"{{granteeName}}\",\n  \"accountNumber\": \"{{accountNumber}}\",\n  \"authorization\": \"{{authorization}}\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Power of Attorney by ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/power-of-attorney/{{id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "power-of-attorney",
+            "{{id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Authorization",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/power-of-attorney/{{id}}?authorization={{authorization}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "power-of-attorney",
+            "{{id}}"
+          ],
+          "query": [
+            {
+              "key": "authorization",
+              "value": "{{authorization}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List by Grantee",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/power-of-attorney/grantee/{{granteeName}}?page={{page}}&size={{size}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "power-of-attorney",
+            "grantee",
+            "{{granteeName}}"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "{{page}}"
+            },
+            {
+              "key": "size",
+              "value": "{{size}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List by Grantor",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/power-of-attorney/grantor/{{grantorName}}?page={{page}}&size={{size}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "power-of-attorney",
+            "grantor",
+            "{{grantorName}}"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "{{page}}"
+            },
+            {
+              "key": "size",
+              "value": "{{size}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Power of Attorney",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/power-of-attorney/{{id}}?grantorName={{grantorName}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "power-of-attorney",
+            "{{id}}"
+          ],
+          "query": [
+            {
+              "key": "grantorName",
+              "value": "{{grantorName}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "id",
+      "value": "POA-EXAMPLE-ID"
+    },
+    {
+      "key": "grantorName",
+      "value": "Cheddar"
+    },
+    {
+      "key": "granteeName",
+      "value": "Merkur"
+    },
+    {
+      "key": "accountNumber",
+      "value": "ACC0001"
+    },
+    {
+      "key": "authorization",
+      "value": "READ"
+    },
+    {
+      "key": "page",
+      "value": "0"
+    },
+    {
+      "key": "size",
+      "value": "5"
+    }
+  ]
+}
