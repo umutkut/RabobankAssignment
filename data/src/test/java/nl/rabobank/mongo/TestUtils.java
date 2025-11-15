@@ -2,10 +2,14 @@ package nl.rabobank.mongo;
 
 import nl.rabobank.account.PaymentAccount;
 import nl.rabobank.account.SavingsAccount;
+import nl.rabobank.audit.AuditLog;
+import nl.rabobank.audit.UpdateType;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.mongo.documents.account.PaymentAccountDocument;
 import nl.rabobank.mongo.documents.account.SavingsAccountDocument;
+import nl.rabobank.mongo.documents.audit.AuditLogDocument;
+import nl.rabobank.mongo.documents.audit.UpdateTypeDocument;
 import nl.rabobank.mongo.documents.poa.AuthorizationType;
 import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 
@@ -17,6 +21,8 @@ public class TestUtils {
     public static final String GRANTOR = "Cheddar Dincer Tanis";
     public static final String GRANTEE = "Merkur Dincer Tanis";
     public static final String POA_ID = "id-1";
+    public static final String AUDIT_ID = "audit-1";
+    public static final String ACTOR = "system-user";
     public static final Double BALANCE = 1000.0;
     public static final Instant CREATED_AT = Instant.parse("2024-01-01T00:00:00Z");
     public static final Instant UPDATED_AT = Instant.parse("2024-01-02T00:00:00Z");
@@ -75,5 +81,33 @@ public class TestUtils {
                 .createdAt(CREATED_AT)
                 .updatedAt(UPDATED_AT)
                 .build();
+    }
+
+    public static AuditLogDocument givenAuditLogDocument() {
+        return AuditLogDocument.builder()
+                .id(AUDIT_ID)
+                .actorName(ACTOR)
+                .granteeName(GRANTEE)
+                .updateType(UpdateTypeDocument.CREATED)
+                .paoId(POA_ID)
+                .accountNumber(ACCOUNT_NUMBER)
+                .newAuthorization(AuthorizationType.READ)
+                .oldAuthorization(AuthorizationType.WRITE)
+                .createdAt(CREATED_AT)
+                .build();
+    }
+
+    public static AuditLog givenAuditLog() {
+        return new AuditLog(
+                AUDIT_ID,
+                ACTOR,
+                GRANTEE,
+                UpdateType.CREATED,
+                POA_ID,
+                ACCOUNT_NUMBER,
+                Authorization.READ,
+                Authorization.WRITE,
+                CREATED_AT
+        );
     }
 }
