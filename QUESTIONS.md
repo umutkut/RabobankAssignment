@@ -18,6 +18,7 @@ The questions are self-answered and **sake of simplicity** is taken into account
 
 **Q4:** Can the same person be both grantor and grantee (self-granting) for the same account?
 - Yes, if a person owns the account, he/she should automatically get WRITE access  
+- User cannot grant access for himself/herself.
 
 **Q5:** Is there a limit on how many PoAs a grantor can create?
 - No limits

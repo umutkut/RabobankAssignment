@@ -35,7 +35,8 @@ This API allows account holders to grant and manage Power of Attorney authorizat
 POST /api/v1/power-of-attorney
 - Creates new PoA authorization
 - Returns 409 if duplicate exists
-- Returns 400 if grantorName doesn't match accountHolderName
+- Returns 403 if grantorName doesn't match accountHolderName
+- User cannot grant access to him/herself
 
 ### Get Accounts by Grantee
 GET /api/v1/power-of-attorney/accounts?requester={requesterName}&page={num}&size={size}
@@ -52,16 +53,15 @@ GET /api/v1/power-of-attorney/accounts/granted/{requesterName}&page={num}&size={
 ### Get Power of Attorney
 
 GET /api/v1/power-of-attorney/{poaId}
-
 - Returns PoA details of provided ID
 
 ### Update Power of Attorney
 PUT /api/v1/power-of-attorney/{id}
 - Updates authorization type (READ/WRITE)
+- If request comes with the same authorization type, no change is made and returns existing PoA
 
 ### Delete Power of Attorney
 DELETE /api/v1/power-of-attorney/{id}
-
 - Deletes the PoA
 - Only the grantor can perform deletion
 

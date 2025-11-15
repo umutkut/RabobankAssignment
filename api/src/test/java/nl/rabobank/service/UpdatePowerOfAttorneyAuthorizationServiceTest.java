@@ -80,4 +80,22 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
         verifyNoMoreInteractions(powerOfAttorneyRepository);
         verifyNoInteractions(clock);
     }
+
+    @Test
+    void updateAuthorization_shouldReturnExistingWithoutPersist_whenAuthorizationUnchanged() {
+        // given
+        val existing = givenPowerOfAttorney(); // Authorization.READ
+        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(existing));
+        val request = new UpdatePowerOfAttorneyAuthorizationRequest(POA_ID, Authorization.READ);
+
+        // when
+        val result = service.updateAuthorization(request);
+
+        // then
+        assertThat(result).isSameAs(existing);
+        verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
+        verify(powerOfAttorneyRepository, never()).save(any());
+        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verifyNoInteractions(clock);
+    }
 }

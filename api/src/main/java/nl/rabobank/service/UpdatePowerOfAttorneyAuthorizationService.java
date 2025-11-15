@@ -24,6 +24,11 @@ public class UpdatePowerOfAttorneyAuthorizationService {
         val poa = powerOfAttorneyRepository.findById(request.paoId())
                 .orElseThrow(() -> new PowerOfAttorneyNotFoundException("With id: " + request.paoId()));
 
+        if (poa.authorization() == request.authorization()) {
+            log.debug("Authorization is already set to {}", request.authorization());
+            return poa;
+        }
+
         val updated = poa.toBuilder()
                 .authorization(request.authorization())
                 .updatedAt(clock.instant())
