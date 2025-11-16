@@ -91,7 +91,7 @@ The data module defaults (see `data/src/main/resources/application.properties`):
 - `spring.data.mongodb.port=27017`
 - `spring.data.mongodb.database=test`
 
-Once started, the API listens on the default Spring Boot port (8081).
+Once started, the API listens on the default Spring Boot port (8080).
 
 ## Try It Out
 

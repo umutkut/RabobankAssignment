@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Rabobank Power of Attorney API",
-    "description": "Postman collection for the Power of Attorney Management API. Endpoints are based on api/src/main/java/nl/rabobank/controller/PowerOfAttorneyController.java.",
+    "description": "Postman collection for the Power of Attorney Management API. Endpoints align with AccountController and AuditController under api/src/main/java/nl/rabobank/controller.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "version": "1.0.0"
   },
@@ -17,14 +17,15 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/power-of-attorney",
+          "raw": "{{baseUrl}}/api/v1/account/authorization",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "api",
             "v1",
-            "power-of-attorney"
+            "account",
+            "authorization"
           ]
         },
         "body": {
@@ -39,14 +40,15 @@
       "request": {
         "method": "GET",
         "url": {
-          "raw": "{{baseUrl}}/api/v1/power-of-attorney/{{id}}",
+          "raw": "{{baseUrl}}/api/v1/account/authorization/{{id}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "api",
             "v1",
-            "power-of-attorney",
+            "account",
+            "authorization",
             "{{id}}"
           ]
         }
@@ -58,20 +60,21 @@
       "request": {
         "method": "PUT",
         "url": {
-          "raw": "{{baseUrl}}/api/v1/power-of-attorney/{{id}}?authorization={{authorization}}",
+          "raw": "{{baseUrl}}/api/v1/account/authorization/{{id}}?newAuthorization={{newAuthorization}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "api",
             "v1",
-            "power-of-attorney",
+            "account",
+            "authorization",
             "{{id}}"
           ],
           "query": [
             {
-              "key": "authorization",
-              "value": "{{authorization}}"
+              "key": "newAuthorization",
+              "value": "{{newAuthorization}}"
             }
           ]
         }
@@ -79,60 +82,41 @@
       "response": []
     },
     {
-      "name": "List by Grantee",
+      "name": "List Accounts Accessible by Grantee",
       "request": {
         "method": "GET",
         "url": {
-          "raw": "{{baseUrl}}/api/v1/power-of-attorney/grantee/{{granteeName}}?page={{page}}&size={{size}}",
+          "raw": "{{baseUrl}}/api/v1/account/accessible-by/{{granteeName}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "api",
             "v1",
-            "power-of-attorney",
-            "grantee",
+            "account",
+            "accessible-by",
             "{{granteeName}}"
-          ],
-          "query": [
-            {
-              "key": "page",
-              "value": "{{page}}"
-            },
-            {
-              "key": "size",
-              "value": "{{size}}"
-            }
           ]
         }
       },
       "response": []
     },
     {
-      "name": "List by Grantor",
+      "name": "List Power of Attorney by Grantor",
       "request": {
         "method": "GET",
         "url": {
-          "raw": "{{baseUrl}}/api/v1/power-of-attorney/grantor/{{grantorName}}?page={{page}}&size={{size}}",
+          "raw": "{{baseUrl}}/api/v1/account/authorization/granted-by/{{grantorName}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "api",
             "v1",
-            "power-of-attorney",
-            "grantor",
+            "account",
+            "authorization",
+            "granted-by",
             "{{grantorName}}"
-          ],
-          "query": [
-            {
-              "key": "page",
-              "value": "{{page}}"
-            },
-            {
-              "key": "size",
-              "value": "{{size}}"
-            }
           ]
         }
       },
@@ -143,20 +127,81 @@
       "request": {
         "method": "DELETE",
         "url": {
-          "raw": "{{baseUrl}}/api/v1/power-of-attorney/{{id}}?grantorName={{grantorName}}",
+          "raw": "{{baseUrl}}/api/v1/account/authorization/{{id}}?grantorName={{grantorName}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "api",
             "v1",
-            "power-of-attorney",
+            "account",
+            "authorization",
             "{{id}}"
           ],
           "query": [
             {
               "key": "grantorName",
               "value": "{{grantorName}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Audit Logs by Actor",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/audits/actor/{{actorName}}?page={{page}}&size={{size}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "audits",
+            "actor",
+            "{{actorName}}"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "{{page}}"
+            },
+            {
+              "key": "size",
+              "value": "{{size}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Audit Logs by Account",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/audits/account/{{accountNumber}}?page={{page}}&size={{size}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "audits",
+            "account",
+            "{{accountNumber}}"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "{{page}}"
+            },
+            {
+              "key": "size",
+              "value": "{{size}}"
             }
           ]
         }
@@ -189,6 +234,14 @@
     {
       "key": "authorization",
       "value": "READ"
+    },
+    {
+      "key": "newAuthorization",
+      "value": "READ"
+    },
+    {
+      "key": "actorName",
+      "value": "Cheddar"
     },
     {
       "key": "page",
