@@ -40,10 +40,9 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
     }
 
     @Override
-    public Page<PowerOfAttorney> findByGranteeName(String granteeName, Pageable pageable) {
-        val page = powerOfAttorneyMongoClient.findByGranteeName(granteeName, pageable);
-        val content = mapListOfPoaDocsToDomain(page.getContent());
-        return new PageImpl<>(content, pageable, page.getTotalElements());
+    public List<PowerOfAttorney> findByGranteeName(String granteeName) {
+        val docList = powerOfAttorneyMongoClient.findByGranteeName(granteeName);
+        return mapListOfPoaDocsToDomain(docList);
     }
 
     @Override

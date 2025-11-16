@@ -60,17 +60,17 @@ class AccountMapperTest {
         // Given
         val unknownAccount = new Account() {
             @Override
-            public String getAccountNumber() {
+            public String accountNumber() {
                 return ACCOUNT_NUMBER;
             }
 
             @Override
-            public String getAccountHolderName() {
+            public String accountHolderName() {
                 return GRANTOR;
             }
 
             @Override
-            public Double getBalance() {
+            public Double balance() {
                 return BALANCE;
             }
         };
@@ -98,9 +98,9 @@ class AccountMapperTest {
         // Then
         assertNotNull(account);
         assertInstanceOf(PaymentAccount.class, account);
-        assertEquals(ACCOUNT_NUMBER, account.getAccountNumber());
-        assertEquals(GRANTOR, account.getAccountHolderName());
-        assertEquals(1000.0, account.getBalance());
+        assertEquals(ACCOUNT_NUMBER, account.accountNumber());
+        assertEquals(GRANTOR, account.accountHolderName());
+        assertEquals(1000.0, account.balance());
     }
 
     @Test
@@ -118,9 +118,9 @@ class AccountMapperTest {
         // Then
         assertNotNull(account);
         assertInstanceOf(SavingsAccount.class, account);
-        assertEquals(ACCOUNT_NUMBER, account.getAccountNumber());
-        assertEquals(GRANTOR, account.getAccountHolderName());
-        assertEquals(5000.0, account.getBalance());
+        assertEquals(ACCOUNT_NUMBER, account.accountNumber());
+        assertEquals(GRANTOR, account.accountHolderName());
+        assertEquals(5000.0, account.balance());
     }
 
 
@@ -138,9 +138,9 @@ class AccountMapperTest {
         val reconvertedAccount = AccountMapper.toDomain(document);
 
         // Then
-        assertEquals(originalAccount.getAccountNumber(), reconvertedAccount.getAccountNumber());
-        assertEquals(originalAccount.getAccountHolderName(), reconvertedAccount.getAccountHolderName());
-        assertEquals(originalAccount.getBalance(), reconvertedAccount.getBalance());
+        assertEquals(originalAccount.accountNumber(), reconvertedAccount.accountNumber());
+        assertEquals(originalAccount.accountHolderName(), reconvertedAccount.accountHolderName());
+        assertEquals(originalAccount.balance(), reconvertedAccount.balance());
         assertInstanceOf(PaymentAccount.class, reconvertedAccount);
     }
 
@@ -158,9 +158,9 @@ class AccountMapperTest {
         val reconvertedAccount = AccountMapper.toDomain(document);
 
         // Then
-        assertEquals(originalAccount.getAccountNumber(), reconvertedAccount.getAccountNumber());
-        assertEquals(originalAccount.getAccountHolderName(), reconvertedAccount.getAccountHolderName());
-        assertEquals(originalAccount.getBalance(), reconvertedAccount.getBalance());
+        assertEquals(originalAccount.accountNumber(), reconvertedAccount.accountNumber());
+        assertEquals(originalAccount.accountHolderName(), reconvertedAccount.accountHolderName());
+        assertEquals(originalAccount.balance(), reconvertedAccount.balance());
         assertInstanceOf(SavingsAccount.class, reconvertedAccount);
     }
 }

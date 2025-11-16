@@ -45,9 +45,9 @@ class AccountRepositoryImplTest {
         assertTrue(result.isPresent());
         assertInstanceOf(PaymentAccount.class, result.get());
         PaymentAccount acc = (PaymentAccount) result.get();
-        assertEquals(ACCOUNT_NUMBER, acc.getAccountNumber());
-        assertEquals(GRANTOR, acc.getAccountHolderName());
-        assertEquals(BALANCE, acc.getBalance());
+        assertEquals(ACCOUNT_NUMBER, acc.accountNumber());
+        assertEquals(GRANTOR, acc.accountHolderName());
+        assertEquals(BALANCE, acc.balance());
         verify(accountMongoClient, times(1)).findById(ACCOUNT_NUMBER);
     }
 
@@ -61,9 +61,9 @@ class AccountRepositoryImplTest {
         assertTrue(result.isPresent());
         assertInstanceOf(SavingsAccount.class, result.get());
         val acc = (SavingsAccount) result.get();
-        assertEquals(ACCOUNT_NUMBER, acc.getAccountNumber());
-        assertEquals(GRANTOR, acc.getAccountHolderName());
-        assertEquals(BALANCE, acc.getBalance());
+        assertEquals(ACCOUNT_NUMBER, acc.accountNumber());
+        assertEquals(GRANTOR, acc.accountHolderName());
+        assertEquals(BALANCE, acc.balance());
         verify(accountMongoClient, times(1)).findById(ACCOUNT_NUMBER);
     }
 }

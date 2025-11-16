@@ -1,0 +1,14 @@
+[
+  {
+    "accountNumber": "NL91RABO1234567890",
+    "accountHolderName": "Cheddar Dincer Tanis",
+    "balance": 1000.0,
+    "type": "PAYMENT"
+  },
+  {
+    "accountNumber": "NL91RABO2234567890",
+    "accountHolderName": "Merkur Dincer Tanis",
+    "balance": 1000.0,
+    "type": "SAVINGS"
+  }
+]

@@ -20,9 +20,9 @@ public record AccountAPIResponse(
             type = "UNKNOWN";
         }
         return new AccountAPIResponse(
-                account.getAccountNumber(),
-                account.getAccountHolderName(),
-                account.getBalance(),
+                account.accountNumber(),
+                account.accountHolderName(),
+                account.balance(),
                 type
         );
     }

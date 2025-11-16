@@ -3,17 +3,17 @@ package nl.rabobank.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import nl.rabobank.authorizations.Authorization;
+import nl.rabobank.controller.model.AccountAPIResponse;
 import nl.rabobank.controller.model.PowerOfAttorneyAPIResponse;
 import nl.rabobank.service.*;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/account")
@@ -22,7 +22,7 @@ public class AccountController {
 
     private final CreatePowerOfAttorneyService createPowerOfAttorneyService;
     private final GetPowerOfAttorneyByIdService getPowerOfAttorneyByIdService;
-    private final GetGranteePowerOfAttorneyService getGranteePowerOfAttorneyService;
+    private final GetAccountsAccessibleByUserService getGranteePowerOfAttorneyService;
     private final GetGrantorPowerOfAttorneyService getGrantorPowerOfAttorneyService;
     private final UpdatePowerOfAttorneyAuthorizationService updatePowerOfAttorneyAuthorizationService;
     private final DeletePowerOfAttorneyService deletePowerOfAttorneyService;
@@ -49,18 +49,17 @@ public class AccountController {
     }
 
     @GetMapping("/accessible-by/{granteeName}")
-    public ResponseEntity<Page<PowerOfAttorneyAPIResponse>> listByGrantee(
-            @PathVariable("granteeName") String granteeName,
-            @PageableDefault(sort = "accountNumber", size = 5) Pageable pageable) {
-        val poas = getGranteePowerOfAttorneyService.listPoasForUser(granteeName, pageable);
-        val body = poas.map(PowerOfAttorneyAPIResponse::from);
+    public ResponseEntity<List<AccountAPIResponse>> listByGrantee(
+            @PathVariable("granteeName") String granteeName) {
+        val accounts = getGranteePowerOfAttorneyService.listAccountsAccessibleByUser(granteeName);
+        val body = accounts.stream().map(AccountAPIResponse::from).toList();
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/granted-by/{grantorName}")
     public ResponseEntity<Page<PowerOfAttorneyAPIResponse>> listByGrantor(
             @PathVariable("grantorName") String grantorName,
-            @PageableDefault(sort = "accountNumber", size = 5) Pageable pageable) {
+            @org.springframework.data.web.PageableDefault(sort = "accountNumber", size = 5) org.springframework.data.domain.Pageable pageable) {
         val poas = getGrantorPowerOfAttorneyService.listPoasForGrantor(grantorName, pageable);
         val body = poas.map(PowerOfAttorneyAPIResponse::from);
         return ResponseEntity.ok(body);

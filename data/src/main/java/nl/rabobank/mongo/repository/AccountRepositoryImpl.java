@@ -8,6 +8,7 @@ import nl.rabobank.mongo.mapper.AccountMapper;
 import nl.rabobank.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,5 +20,11 @@ public class AccountRepositoryImpl implements AccountRepository {
     public Optional<Account> findByAccountNumber(String accountNumber) {
         val optDoc = accountMongoClient.findById(accountNumber);
         return optDoc.map(AccountMapper::toDomain);
+    }
+
+    @Override
+    public List<Account> findAllByAccountHolderName(String accountHolderName) {
+        val docs = accountMongoClient.findAllByAccountHolderName(accountHolderName);
+        return docs.stream().map(AccountMapper::toDomain).toList();
     }
 }

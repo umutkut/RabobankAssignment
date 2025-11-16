@@ -13,17 +13,17 @@ public class AccountMapper {
     }
 
     public static AccountDocument toDocument(Account account) {
-        if (account instanceof PaymentAccount payment) {
+        if (account instanceof PaymentAccount(String accountNumber, String accountHolderName, Double balance)) {
             return PaymentAccountDocument.builder()
-                    .accountNumber(payment.getAccountNumber())
-                    .accountHolderName(payment.getAccountHolderName())
-                    .balance(payment.getBalance())
+                    .accountNumber(accountNumber)
+                    .accountHolderName(accountHolderName)
+                    .balance(balance)
                     .build();
-        } else if (account instanceof SavingsAccount savings) {
+        } else if (account instanceof SavingsAccount(String accountNumber, String accountHolderName, Double balance)) {
             return SavingsAccountDocument.builder()
-                    .accountNumber(savings.getAccountNumber())
-                    .accountHolderName(savings.getAccountHolderName())
-                    .balance(savings.getBalance())
+                    .accountNumber(accountNumber)
+                    .accountHolderName(accountHolderName)
+                    .balance(balance)
                     .build();
         }
         throw new IllegalArgumentException("Unknown account type");

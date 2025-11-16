@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,5 +16,5 @@ public interface PowerOfAttorneyMongoClient extends MongoRepository<PowerOfAttor
 
     Optional<PowerOfAttorneyDocument> findByGrantorNameAndGranteeNameAndAccountNumber(String grantor, String grantee, String accountNumber);
 
-    Page<PowerOfAttorneyDocument> findByGranteeName(String granteeName, Pageable pageable);
+    List<PowerOfAttorneyDocument> findByGranteeName(String granteeName);
 }

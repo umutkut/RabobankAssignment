@@ -31,7 +31,7 @@ public class CreatePowerOfAttorneyService {
                 .findByAccountNumber(request.accountNumber())
                 .orElseThrow(() -> new AccountNotFoundException("With accountNumber: " + request.accountNumber()));
 
-        if (!account.getAccountHolderName().equals(request.grantorName())) {
+        if (!account.accountHolderName().equals(request.grantorName())) {
             throw new ForbiddenOperationException("User cannot operate. " + request.grantorName() + " is not owner of the requested account.");
         }
 
@@ -59,7 +59,7 @@ public class CreatePowerOfAttorneyService {
                 .build();
         val savedPoa = powerOfAttorneyRepository.save(powerOfAttorney);
 
-        log.debug("Created POA for accountNumber: {}", savedPoa.account().getAccountNumber());
+        log.debug("Created POA for accountNumber: {}", savedPoa.account().accountNumber());
         auditEventsPublisher.publishCreated(savedPoa);
         return savedPoa;
     }

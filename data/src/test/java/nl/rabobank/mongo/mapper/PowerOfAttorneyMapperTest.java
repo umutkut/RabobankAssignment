@@ -50,7 +50,7 @@ class PowerOfAttorneyMapperTest {
         assertEquals(GRANTOR, powerOfAttorney.grantorName());
         assertEquals(GRANTEE, powerOfAttorney.granteeName());
         assertEquals(account, powerOfAttorney.account());
-        assertEquals(ACCOUNT_NUMBER, powerOfAttorney.account().getAccountNumber());
+        assertEquals(ACCOUNT_NUMBER, powerOfAttorney.account().accountNumber());
         assertEquals(Authorization.READ, powerOfAttorney.authorization());
         assertEquals(CREATED_AT, powerOfAttorney.createdAt());
         assertEquals(UPDATED_AT, powerOfAttorney.updatedAt());
@@ -70,8 +70,8 @@ class PowerOfAttorneyMapperTest {
         assertEquals(originalPowerOfAttorney.id(), reconvertedPowerOfAttorney.id());
         assertEquals(originalPowerOfAttorney.grantorName(), reconvertedPowerOfAttorney.grantorName());
         assertEquals(originalPowerOfAttorney.granteeName(), reconvertedPowerOfAttorney.granteeName());
-        assertEquals(originalPowerOfAttorney.account().getAccountNumber(),
-                reconvertedPowerOfAttorney.account().getAccountNumber());
+        assertEquals(originalPowerOfAttorney.account().accountNumber(),
+                reconvertedPowerOfAttorney.account().accountNumber());
         assertEquals(originalPowerOfAttorney.authorization(), reconvertedPowerOfAttorney.authorization());
         assertEquals(originalPowerOfAttorney.createdAt(), reconvertedPowerOfAttorney.createdAt());
         assertEquals(originalPowerOfAttorney.updatedAt(), reconvertedPowerOfAttorney.updatedAt());

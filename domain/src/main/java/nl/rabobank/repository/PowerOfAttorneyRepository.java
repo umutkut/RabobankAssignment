@@ -4,6 +4,7 @@ import nl.rabobank.authorizations.PowerOfAttorney;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PowerOfAttorneyRepository {
@@ -13,7 +14,7 @@ public interface PowerOfAttorneyRepository {
 
     Optional<PowerOfAttorney> findByGrantorAndGranteeAndAccountNumber(String grantor, String grantee, String accountNumber);
 
-    Page<PowerOfAttorney> findByGranteeName(String granteeName, Pageable pageable);
+    List<PowerOfAttorney> findByGranteeName(String granteeName);
 
     Page<PowerOfAttorney> findByGrantorName(String grantorName, Pageable pageable);
 

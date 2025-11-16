@@ -111,22 +111,19 @@ class AccountControllerIT {
     }
 
     @Test
-    void listByGrantee_success_withPagination() throws Exception {
+    void listByGrantee_success_returnsAccounts() throws Exception {
         // Given
-        val poa1 = givenPowerOfAttorney();
-        val poa2 = givenPowerOfAttorney().toBuilder()
-                .id("poa-2")
-                .account(givenSavingsAccount())
-                .build();
-        val pageable = PageRequest.of(0, 2);
-        val page = new PageImpl<>(List.of(poa1, poa2), pageable, 2);
-        when(powerOfAttorneyRepository.findByGranteeName(eq(GRANTEE), any(Pageable.class)))
-                .thenReturn(page);
+        val ownAccount = givenSavingsAccount().toBuilder().accountHolderName(GRANTEE).build();
+        when(accountRepository.findAllByAccountHolderName(GRANTEE)).thenReturn(List.of(ownAccount));
 
-        val expectedJson = readStringFromFile("controller/poas_paginated.json");
+        val poa = givenPowerOfAttorney();
+        when(powerOfAttorneyRepository.findByGranteeName(GRANTEE))
+                .thenReturn(List.of(poa));
+
+        val expectedJson = readStringFromFile("controller/accounts_list.json");
 
         // When & Then
-        mockMvc.perform(get(ACCOUNT_API_PATH + "/accessible-by/" + GRANTEE + "?page=0&size=2"))
+        mockMvc.perform(get(ACCOUNT_API_PATH + "/accessible-by/" + GRANTEE))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }

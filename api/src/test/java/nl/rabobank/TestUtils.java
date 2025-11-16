@@ -13,6 +13,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class TestUtils {
     public static final String ACCOUNT_NUMBER = "NL91RABO1234567890";
+    public static final String OTHER_ACCOUNT_NUMBER = "NL91RABO2234567890";
     public static final String GRANTOR = "Cheddar Dincer Tanis";
     public static final String GRANTEE = "Merkur Dincer Tanis";
     public static final String POA_ID = "0899c184-1e66-46b4-ae0a-5b8536d6356b";
@@ -47,7 +48,7 @@ public class TestUtils {
 
     public static SavingsAccount givenSavingsAccount() {
         return new SavingsAccount(
-                ACCOUNT_NUMBER,
+                OTHER_ACCOUNT_NUMBER,
                 GRANTOR,
                 BALANCE
         );

@@ -16,7 +16,7 @@ public class PowerOfAttorneyMapper {
                 .id(powerOfAttorney.id())
                 .grantorName(powerOfAttorney.grantorName())
                 .granteeName(powerOfAttorney.granteeName())
-                .accountNumber(powerOfAttorney.account().getAccountNumber())
+                .accountNumber(powerOfAttorney.account().accountNumber())
                 .authorizationType(mapToAuthorizationType(powerOfAttorney.authorization()))
                 .createdAt(powerOfAttorney.createdAt())
                 .updatedAt(powerOfAttorney.updatedAt())
