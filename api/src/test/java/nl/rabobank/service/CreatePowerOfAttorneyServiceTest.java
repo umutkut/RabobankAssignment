@@ -140,4 +140,23 @@ class CreatePowerOfAttorneyServiceTest {
         verifyNoInteractions(idGenerator, auditEventsPublisher);
         verify(powerOfAttorneyRepository, never()).save(any());
     }
+
+    @Test
+    void create_shouldThrowForbidden_whenGrantorEqualsGrantee() {
+        // Given
+        val account = new PaymentAccount(ACCOUNT_NUMBER, GRANTOR, BALANCE);
+        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
+
+        val request = new CreatePowerOfAttorneyServiceRequest(
+                GRANTOR,
+                GRANTOR,
+                ACCOUNT_NUMBER,
+                Authorization.READ
+        );
+
+        // When and then
+        assertThrows(ForbiddenOperationException.class, () -> service.create(request));
+        verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
+        verifyNoInteractions(powerOfAttorneyRepository, idGenerator, auditEventsPublisher);
+    }
 }

@@ -35,6 +35,10 @@ public class CreatePowerOfAttorneyService {
             throw new ForbiddenOperationException("User cannot operate. " + request.grantorName() + " is not owner of the requested account.");
         }
 
+        if (request.grantorName().equals(request.granteeName())) {
+            throw new ForbiddenOperationException("User cannot grant access to him/herself.");
+        }
+
         powerOfAttorneyRepository
                 .findByGrantorAndGranteeAndAccountNumber(request.grantorName(),
                         request.granteeName(),

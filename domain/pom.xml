@@ -26,9 +26,10 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>3.5.1</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
+                    <argLine>${surefireArgLine}</argLine>
                 </configuration>
             </plugin>
         </plugins>

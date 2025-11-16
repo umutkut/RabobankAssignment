@@ -9,7 +9,8 @@ This API allows account holders to grant and manage Power of Attorney authorizat
 ### Power of Attorney Creation
 - A grantor can only grant access to accounts they own (grantorName must match accountHolderName)
 - No duplicate PoAs allowed - same grantor/grantee/account combination returns 409 Conflict
-- Account owners automatically have WRITE access to their own accounts
+- Account owners automatically have WRITE access to their own accounts; this access is implicit and is NOT stored as a
+  PoA record (i.e., not part of PoA lifecycle, not updatable/deletable, not audited as a PoA)
 - No limit on number of PoAs a grantor can create
 
 ### Authorization Types
@@ -39,10 +40,15 @@ POST /api/v1/power-of-attorney
 - User cannot grant access to him/herself
 
 ### Get Accounts by Grantee
-GET /api/v1/power-of-attorney/accounts?requester={requesterName}&page={num}&size={size}
-- Returns paginated list of all PoAs for a grantee
+
+GET /api/v1/power-of-attorney/accounts?requester={requesterName}&page={num}&size={size}&includeSelf={true|false}
+
+- Returns the union of:
+    - Ownership-based access for the requester (always WRITE, implicit, not stored as PoA)
+    - Delegated access from stored PoAs where `granteeName = requester`
+- `includeSelf` (optional): when true (default), include ownership-based rows; when false, return only delegated PoAs
 - Default page size: 5
-- Default sorting: by accountNumber
+- Default sorting: by `accountNumber`
 
 ### Get Accounts by Grantor
 GET /api/v1/power-of-attorney/accounts/granted/{requesterName}&page={num}&size={size}

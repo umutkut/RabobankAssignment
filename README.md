@@ -35,6 +35,20 @@ This repository is a Maven multi‑module project:
   mvn -pl domain test
   ```
 
+## Test Coverage (JaCoCo)
+
+- Run coverage for individual modules
+  ```bash
+  mvn -pl api -am clean verify
+  mvn -pl data -am clean verify
+  mvn -pl domain -am clean verify
+  ```
+
+- Per-module coverage reports:
+    - API: `api/target/site/jacoco/index.html`
+    - Data: `data/target/site/jacoco/index.html`
+    - Domain: `domain/target/site/jacoco/index.html`
+
 ## Run Locally
 
 ### 1) Start MongoDB (Docker Compose)
