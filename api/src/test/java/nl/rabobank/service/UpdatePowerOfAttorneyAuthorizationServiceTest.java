@@ -1,6 +1,7 @@
 package nl.rabobank.service;
 
 import lombok.val;
+import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
@@ -28,6 +29,8 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
     private PowerOfAttorneyRepository powerOfAttorneyRepository;
     @Mock
     private Clock clock;
+    @Mock
+    private AuditEventsPublisher auditEventsPublisher;
 
     @InjectMocks
     private UpdatePowerOfAttorneyAuthorizationService service;
@@ -59,7 +62,8 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
         ArgumentCaptor<PowerOfAttorney> captor = ArgumentCaptor.forClass(PowerOfAttorney.class);
         verify(powerOfAttorneyRepository).findById(POA_ID);
         verify(powerOfAttorneyRepository).save(captor.capture());
-        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verify(auditEventsPublisher, times(1)).publishUpdated(existing.authorization(), captor.getValue());
+        verifyNoMoreInteractions(powerOfAttorneyRepository, auditEventsPublisher);
 
         val saved = captor.getValue();
         assertThat(saved.authorization()).isEqualTo(Authorization.WRITE);
@@ -78,7 +82,7 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
         verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
         verify(powerOfAttorneyRepository, never()).save(any());
         verifyNoMoreInteractions(powerOfAttorneyRepository);
-        verifyNoInteractions(clock);
+        verifyNoInteractions(clock, auditEventsPublisher);
     }
 
     @Test
@@ -96,6 +100,6 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
         verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
         verify(powerOfAttorneyRepository, never()).save(any());
         verifyNoMoreInteractions(powerOfAttorneyRepository);
-        verifyNoInteractions(clock);
+        verifyNoInteractions(clock, auditEventsPublisher);
     }
 }

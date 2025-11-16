@@ -3,6 +3,7 @@ package nl.rabobank.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
 import nl.rabobank.repository.PowerOfAttorneyRepository;
@@ -18,6 +19,7 @@ public class UpdatePowerOfAttorneyAuthorizationService {
 
     private final PowerOfAttorneyRepository powerOfAttorneyRepository;
     private final Clock clock;
+    private final AuditEventsPublisher auditEventsPublisher;
 
     public PowerOfAttorney updateAuthorization(UpdatePowerOfAttorneyAuthorizationRequest request) {
         log.debug("Updating authorization for POA id: {} to {}", request.paoId(), request.authorization());
@@ -29,13 +31,15 @@ public class UpdatePowerOfAttorneyAuthorizationService {
             return poa;
         }
 
-        val updated = poa.toBuilder()
+        val updatedPoa = poa.toBuilder()
                 .authorization(request.authorization())
                 .updatedAt(clock.instant())
                 .build();
 
-        val saved = powerOfAttorneyRepository.save(updated);
+        val saved = powerOfAttorneyRepository.save(updatedPoa);
         log.debug("Updated authorization for POA id: {}", request.paoId());
+
+        auditEventsPublisher.publishUpdated(poa.authorization(), updatedPoa);
         return saved;
     }
 }

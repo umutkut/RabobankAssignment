@@ -3,6 +3,7 @@ package nl.rabobank.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.AccountNotFoundException;
 import nl.rabobank.exception.ForbiddenOperationException;
@@ -22,6 +23,7 @@ public class CreatePowerOfAttorneyService {
     private final PowerOfAttorneyRepository powerOfAttorneyRepository;
     private final IdGenerator idGenerator;
     private final Clock clock;
+    private final AuditEventsPublisher auditEventsPublisher;
 
     public PowerOfAttorney create(CreatePowerOfAttorneyServiceRequest request) {
         log.debug("Creating POA for accountNumber: {}", request.accountNumber());
@@ -54,6 +56,7 @@ public class CreatePowerOfAttorneyService {
         val savedPoa = powerOfAttorneyRepository.save(powerOfAttorney);
 
         log.debug("Created POA for accountNumber: {}", savedPoa.account().getAccountNumber());
+        auditEventsPublisher.publishCreated(savedPoa);
         return savedPoa;
     }
 }

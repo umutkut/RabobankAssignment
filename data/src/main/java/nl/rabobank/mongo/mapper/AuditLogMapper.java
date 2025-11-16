@@ -18,7 +18,7 @@ public class AuditLogMapper {
                 .actorName(auditLog.actorName())
                 .granteeName(auditLog.granteeName())
                 .updateType(mapToUpdateTypeDocument(auditLog.updateType()))
-                .paoId(auditLog.paoId())
+                .paoId(auditLog.poaId())
                 .accountNumber(auditLog.accountNumber())
                 .newAuthorization(mapToAuthorizationType(auditLog.newAuthorization()))
                 .oldAuthorization(mapToAuthorizationType(auditLog.oldAuthorization()))

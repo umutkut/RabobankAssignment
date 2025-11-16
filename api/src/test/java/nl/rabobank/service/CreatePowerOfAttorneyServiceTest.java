@@ -2,6 +2,7 @@ package nl.rabobank.service;
 
 import lombok.val;
 import nl.rabobank.account.PaymentAccount;
+import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.AccountNotFoundException;
@@ -34,6 +35,8 @@ class CreatePowerOfAttorneyServiceTest {
     private IdGenerator idGenerator;
     @Mock
     private Clock clock;
+    @Mock
+    private AuditEventsPublisher auditEventsPublisher;
 
     @InjectMocks
     private CreatePowerOfAttorneyService service;
@@ -74,7 +77,8 @@ class CreatePowerOfAttorneyServiceTest {
         verify(powerOfAttorneyRepository, times(1)).findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER);
         verify(idGenerator, times(1)).generateUUID();
         verify(powerOfAttorneyRepository, times(1)).save(any(PowerOfAttorney.class));
-        verifyNoMoreInteractions(accountRepository, idGenerator, powerOfAttorneyRepository);
+        verify(auditEventsPublisher, times(1)).publishCreated(result);
+        verifyNoMoreInteractions(accountRepository, idGenerator, powerOfAttorneyRepository, auditEventsPublisher);
     }
 
     @Test
@@ -92,7 +96,7 @@ class CreatePowerOfAttorneyServiceTest {
         // when / then
         assertThrows(AccountNotFoundException.class, () -> service.create(request));
         verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
-        verifyNoInteractions(powerOfAttorneyRepository, idGenerator);
+        verifyNoInteractions(powerOfAttorneyRepository, idGenerator, auditEventsPublisher);
     }
 
     @Test
@@ -111,7 +115,7 @@ class CreatePowerOfAttorneyServiceTest {
         // when / then
         assertThrows(ForbiddenOperationException.class, () -> service.create(request));
         verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
-        verifyNoInteractions(powerOfAttorneyRepository, idGenerator);
+        verifyNoInteractions(powerOfAttorneyRepository, idGenerator, auditEventsPublisher);
     }
 
     @Test
@@ -133,7 +137,7 @@ class CreatePowerOfAttorneyServiceTest {
         assertThrows(PowerOfAttorneyAlreadyExistException.class, () -> service.create(request));
         verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
         verify(powerOfAttorneyRepository, times(1)).findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER);
-        verifyNoInteractions(idGenerator);
+        verifyNoInteractions(idGenerator, auditEventsPublisher);
         verify(powerOfAttorneyRepository, never()).save(any());
     }
 }

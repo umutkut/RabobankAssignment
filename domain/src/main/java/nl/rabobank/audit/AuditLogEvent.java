@@ -1,23 +1,15 @@
 package nl.rabobank.audit;
 
-import lombok.Builder;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
 
 import java.time.Instant;
 
-@Builder(toBuilder = true)
-public record AuditLog(
-        String id,
-        String actorName,
-        String granteeName,
-        UpdateType updateType,
-        String poaId,
-        String accountNumber,
-        Authorization newAuthorization,
-        Authorization oldAuthorization,
-        Instant createdAt
-) {
+public record AuditLogEvent(AuditLog auditLog) {
+    public static AuditLogEvent of(AuditLog auditLog) {
+        return new AuditLogEvent(auditLog);
+    }
+
     public static AuditLog created(String id, Instant createdAt, PowerOfAttorney poa) {
         return AuditLog.builder()
                 .id(id)

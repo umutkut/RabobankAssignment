@@ -52,7 +52,7 @@ class AuditLogMapperTest {
         assertEquals(ACTOR, auditLog.actorName());
         assertEquals(GRANTEE, auditLog.granteeName());
         assertEquals(UpdateType.CREATED, auditLog.updateType());
-        assertEquals(POA_ID, auditLog.paoId());
+        assertEquals(POA_ID, auditLog.poaId());
         assertEquals(ACCOUNT_NUMBER, auditLog.accountNumber());
         assertEquals(Authorization.READ, auditLog.newAuthorization());
         assertEquals(Authorization.WRITE, auditLog.oldAuthorization());
@@ -73,7 +73,7 @@ class AuditLogMapperTest {
         assertEquals(original.actorName(), reconverted.actorName());
         assertEquals(original.granteeName(), reconverted.granteeName());
         assertEquals(original.updateType(), reconverted.updateType());
-        assertEquals(original.paoId(), reconverted.paoId());
+        assertEquals(original.poaId(), reconverted.poaId());
         assertEquals(original.accountNumber(), reconverted.accountNumber());
         assertEquals(original.newAuthorization(), reconverted.newAuthorization());
         assertEquals(original.oldAuthorization(), reconverted.oldAuthorization());

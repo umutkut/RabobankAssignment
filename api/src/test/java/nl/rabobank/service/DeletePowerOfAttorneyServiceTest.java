@@ -1,5 +1,6 @@
 package nl.rabobank.service;
 
+import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
@@ -22,6 +23,8 @@ class DeletePowerOfAttorneyServiceTest {
 
     @Mock
     private PowerOfAttorneyRepository powerOfAttorneyRepository;
+    @Mock
+    private AuditEventsPublisher auditEventsPublisher;
 
     @InjectMocks
     private DeletePowerOfAttorneyService service;
@@ -29,7 +32,8 @@ class DeletePowerOfAttorneyServiceTest {
     @Test
     void deletes_whenGrantorMatches() {
         //Given
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(givenPowerOfAttorney()));
+        PowerOfAttorney poa = givenPowerOfAttorney();
+        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(poa));
 
         //When
         service.deleteByIdAsGrantor(POA_ID, nl.rabobank.TestUtils.GRANTOR);
@@ -37,7 +41,8 @@ class DeletePowerOfAttorneyServiceTest {
         //Then
         verify(powerOfAttorneyRepository).deleteById(POA_ID);
         verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
-        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verify(auditEventsPublisher, times(1)).publishDeleted(poa);
+        verifyNoMoreInteractions(powerOfAttorneyRepository, auditEventsPublisher);
     }
 
     @Test
@@ -49,6 +54,7 @@ class DeletePowerOfAttorneyServiceTest {
 
         verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
         verify(powerOfAttorneyRepository, never()).deleteById(any());
+        verifyNoInteractions(auditEventsPublisher);
         verifyNoMoreInteractions(powerOfAttorneyRepository);
     }
 
@@ -63,6 +69,7 @@ class DeletePowerOfAttorneyServiceTest {
 
         verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
         verify(powerOfAttorneyRepository, never()).deleteById(any());
+        verifyNoInteractions(auditEventsPublisher);
         verifyNoMoreInteractions(powerOfAttorneyRepository);
     }
 }

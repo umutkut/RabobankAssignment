@@ -3,6 +3,7 @@ package nl.rabobank.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
 import nl.rabobank.repository.PowerOfAttorneyRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class DeletePowerOfAttorneyService {
     private final PowerOfAttorneyRepository powerOfAttorneyRepository;
+    private final AuditEventsPublisher auditEventsPublisher;
 
     public void deleteByIdAsGrantor(String poaId, String grantorName) {
         log.debug("Deleting POA with id: {} as grantor: {}", poaId, grantorName);
@@ -24,6 +26,8 @@ public class DeletePowerOfAttorneyService {
         }
 
         powerOfAttorneyRepository.deleteById(poaId);
+
         log.debug("Deleted POA with id: {} as grantor: {}", poaId, grantorName);
+        auditEventsPublisher.publishDeleted(poa);
     }
 }
