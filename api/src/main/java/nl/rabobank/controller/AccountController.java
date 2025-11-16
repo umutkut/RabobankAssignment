@@ -8,7 +8,6 @@ import nl.rabobank.controller.model.PowerOfAttorneyAPIResponse;
 import nl.rabobank.service.*;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,12 +55,11 @@ public class AccountController {
         return ResponseEntity.ok(body);
     }
 
-    @GetMapping("/granted-by/{grantorName}")
-    public ResponseEntity<Page<PowerOfAttorneyAPIResponse>> listByGrantor(
-            @PathVariable("grantorName") String grantorName,
-            @org.springframework.data.web.PageableDefault(sort = "accountNumber", size = 5) org.springframework.data.domain.Pageable pageable) {
-        val poas = getGrantorPowerOfAttorneyService.listPoasForGrantor(grantorName, pageable);
-        val body = poas.map(PowerOfAttorneyAPIResponse::from);
+    @GetMapping("/authorization/granted-by/{grantorName}")
+    public ResponseEntity<List<PowerOfAttorneyAPIResponse>> listByGrantor(
+            @PathVariable("grantorName") String grantorName) {
+        val poas = getGrantorPowerOfAttorneyService.listPoasForGrantor(grantorName);
+        val body = poas.stream().map(PowerOfAttorneyAPIResponse::from).toList();
         return ResponseEntity.ok(body);
     }
 

@@ -15,8 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -156,18 +154,15 @@ class PowerOfAttorneyRepositoryImplTest {
     void findByGrantorName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
-        val pageable = PageRequest.of(0, 10);
-        val page = new PageImpl<>(List.of(d1), pageable, 1);
-        when(powerOfAttorneyMongoClient.findByGrantorName(GRANTOR, pageable))
-                .thenReturn(page);
+        when(powerOfAttorneyMongoClient.findByGrantorName(GRANTOR))
+                .thenReturn(List.of(d1));
 
         val a1 = givenPaymentAccountDocument();
         when(accountMongoClient.findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER)))
                 .thenReturn(List.of(a1));
 
         // When
-        val resultPage = service.findByGrantorName(GRANTOR, pageable);
-        val result = resultPage.getContent();
+        val result = service.findByGrantorName(GRANTOR);
 
         // Then
         assertEquals(1, result.size());
@@ -177,7 +172,7 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(ACCOUNT_NUMBER, poa.account().accountNumber());
         assertEquals(Authorization.READ, poa.authorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorName(GRANTOR, pageable);
+        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorName(GRANTOR);
         verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER));
     }
 

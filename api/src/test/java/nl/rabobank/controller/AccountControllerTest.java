@@ -15,9 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonCompareMode;
@@ -179,22 +176,20 @@ class AccountControllerTest {
     }
 
     @Test
-    void listByGrantor_success_withPagination() throws Exception {
+    void listByGrantor_success_returnsList() throws Exception {
         // Given
         val poa1 = givenPowerOfAttorney();
         val poa2 = givenPowerOfAttorney().toBuilder()
                 .id("poa-2")
                 .account(givenSavingsAccount())
                 .build();
-        val pageable = PageRequest.of(0, 2);
-        val page = new PageImpl<>(List.of(poa1, poa2), pageable, 2);
-        when(getGrantorPowerOfAttorneyService.listPoasForGrantor(eq(GRANTOR), any(Pageable.class)))
-                .thenReturn(page);
+        when(getGrantorPowerOfAttorneyService.listPoasForGrantor(eq(GRANTOR)))
+                .thenReturn(List.of(poa1, poa2));
 
-        val expectedJson = readStringFromFile("controller/poas_paginated.json");
+        val expectedJson = readStringFromFile("controller/poas_list.json");
 
         // When & Then
-        mockMvc.perform(get(ACCOUNT_API_PATH + "/granted-by/" + GRANTOR + "?page=0&size=2"))
+        mockMvc.perform(get(ACCOUNT_API_PATH + "/authorization/granted-by/" + GRANTOR))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }

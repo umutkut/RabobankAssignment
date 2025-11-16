@@ -10,9 +10,6 @@ import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 import nl.rabobank.mongo.mapper.AccountMapper;
 import nl.rabobank.mongo.mapper.PowerOfAttorneyMapper;
 import nl.rabobank.repository.PowerOfAttorneyRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,10 +43,9 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
     }
 
     @Override
-    public Page<PowerOfAttorney> findByGrantorName(String grantorName, Pageable pageable) {
-        val page = powerOfAttorneyMongoClient.findByGrantorName(grantorName, pageable);
-        val content = mapListOfPoaDocsToDomain(page.getContent());
-        return new PageImpl<>(content, pageable, page.getTotalElements());
+    public List<PowerOfAttorney> findByGrantorName(String grantorName) {
+        val docs = powerOfAttorneyMongoClient.findByGrantorName(grantorName);
+        return mapListOfPoaDocsToDomain(docs);
     }
 
     @Override
