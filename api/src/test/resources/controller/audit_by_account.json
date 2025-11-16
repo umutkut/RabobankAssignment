@@ -1,0 +1,40 @@
+{
+  "content": [
+    {
+      "id": "audit-id",
+      "actorName": "Cheddar Dincer Tanis",
+      "granteeName": "Merkur Dincer Tanis",
+      "updateType": "CREATED",
+      "poaId": "0899c184-1e66-46b4-ae0a-5b8536d6356b",
+      "accountNumber": "NL91RABO1234567890",
+      "newAuthorization": "READ",
+      "oldAuthorization": null,
+      "createdAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+    },
+    "offset": 0,
+    "pageNumber": 0,
+    "pageSize": 1,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalPages": 1,
+  "totalElements": 1,
+  "last": true,
+  "size": 1,
+  "number": 0,
+  "sort": {
+    "empty": true,
+    "sorted": false,
+    "unsorted": true
+  },
+  "numberOfElements": 1,
+  "first": true,
+  "empty": false
+}

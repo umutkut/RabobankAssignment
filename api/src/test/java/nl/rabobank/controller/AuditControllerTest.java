@@ -3,6 +3,7 @@ package nl.rabobank.controller;
 import lombok.val;
 import nl.rabobank.audit.AuditLog;
 import nl.rabobank.controller.advice.GlobalControllerAdvice;
+import nl.rabobank.service.GetAccountAuditLogsService;
 import nl.rabobank.service.GetActorAuditLogsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ class AuditControllerTest {
     @MockitoBean
     GetActorAuditLogsService getActorAuditLogsService;
 
+    @MockitoBean
+    GetAccountAuditLogsService getAccountAuditLogsService;
+
     @Test
     void listByActor_success() throws Exception {
         val poa = givenPowerOfAttorney();
@@ -49,5 +53,19 @@ class AuditControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(readStringFromFile("controller/audit_by_actor.json"), JsonCompareMode.STRICT));
+    }
+
+    @Test
+    void listByAccount_success() throws Exception {
+        val poa = givenPowerOfAttorney();
+        val log = AuditLog.created("audit-id", CREATED_AT, poa);
+
+        Page<AuditLog> page = new PageImpl<>(List.of(log), PageRequest.of(0, 1), 1);
+        when(getAccountAuditLogsService.listByAccount(eq(ACCOUNT_NUMBER), any(Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/audits/account/{accountNumber}", ACCOUNT_NUMBER)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(readStringFromFile("controller/audit_by_account.json"), JsonCompareMode.STRICT));
     }
 }
