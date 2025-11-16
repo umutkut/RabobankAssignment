@@ -33,11 +33,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = PowerOfAttorneyController.class)
+@WebMvcTest(controllers = AccountController.class)
 @Import(GlobalControllerAdvice.class)
-class PowerOfAttorneyControllerTest {
+class AccountControllerTest {
 
-    private static final String POA_API_PATH = "/api/v1/power-of-attorney";
+    private static final String ACCOUNT_API_PATH = "/api/v1/account";
 
     @Autowired
     MockMvc mockMvc;
@@ -75,11 +75,11 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/create_success.json");
 
         //When and Then
-        mockMvc.perform(post(POA_API_PATH)
+        mockMvc.perform(post(ACCOUNT_API_PATH + "/authorization")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", POA_API_PATH + "/" + POA_ID))
+                .andExpect(header().string("Location", ACCOUNT_API_PATH + "/authorization/" + POA_ID))
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
 
@@ -94,7 +94,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/account_not_found.json");
 
         //When and Then
-        mockMvc.perform(post(POA_API_PATH)
+        mockMvc.perform(post(ACCOUNT_API_PATH + "/authorization")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
@@ -112,7 +112,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/unsupported_operation.json");
 
         //When and Then
-        mockMvc.perform(post(POA_API_PATH)
+        mockMvc.perform(post(ACCOUNT_API_PATH + "/authorization")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden())
@@ -130,7 +130,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/poa_already_exists.json");
 
         //When and Then
-        mockMvc.perform(post(POA_API_PATH)
+        mockMvc.perform(post(ACCOUNT_API_PATH + "/authorization")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
@@ -145,7 +145,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/create_success.json");
 
         // When & Then
-        mockMvc.perform(get(POA_API_PATH + "/" + POA_ID))
+        mockMvc.perform(get(ACCOUNT_API_PATH + "/authorization/" + POA_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
@@ -157,7 +157,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/poa_not_found.json");
 
         // When & Then
-        mockMvc.perform(get(POA_API_PATH + "/" + POA_ID))
+        mockMvc.perform(get(ACCOUNT_API_PATH + "/authorization/" + POA_ID))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
@@ -178,7 +178,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/poas_paginated.json");
 
         // When & Then
-        mockMvc.perform(get(POA_API_PATH + "/grantee/" + GRANTEE + "?page=0&size=2"))
+        mockMvc.perform(get(ACCOUNT_API_PATH + "/accessible-by/" + GRANTEE + "?page=0&size=2"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
@@ -199,7 +199,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/poas_paginated.json");
 
         // When & Then
-        mockMvc.perform(get(POA_API_PATH + "/grantor/" + GRANTOR + "?page=0&size=2"))
+        mockMvc.perform(get(ACCOUNT_API_PATH + "/granted-by/" + GRANTOR + "?page=0&size=2"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
@@ -214,7 +214,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/update_success.json");
 
         // When & Then
-        mockMvc.perform(put(POA_API_PATH + "/" + POA_ID + "?authorization=WRITE"))
+        mockMvc.perform(put(ACCOUNT_API_PATH + "/authorization/" + POA_ID + "?newAuthorization=WRITE"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
@@ -228,7 +228,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/poa_not_found.json");
 
         // When & Then
-        mockMvc.perform(put(POA_API_PATH + "/" + POA_ID + "?authorization=WRITE"))
+        mockMvc.perform(put(ACCOUNT_API_PATH + "/authorization/" + POA_ID + "?newAuthorization=WRITE"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
@@ -236,7 +236,7 @@ class PowerOfAttorneyControllerTest {
     @Test
     void delete_success() throws Exception {
         // When & Then
-        mockMvc.perform(delete(POA_API_PATH + "/" + POA_ID + "?grantorName=" + GRANTOR))
+        mockMvc.perform(delete(ACCOUNT_API_PATH + "/authorization/" + POA_ID + "?grantorName=" + GRANTOR))
                 .andExpect(status().isNoContent());
     }
 
@@ -248,7 +248,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/poa_not_found.json");
 
         // When & Then
-        mockMvc.perform(delete(POA_API_PATH + "/" + POA_ID + "?grantorName=" + GRANTOR))
+        mockMvc.perform(delete(ACCOUNT_API_PATH + "/authorization/" + POA_ID + "?grantorName=" + GRANTOR))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
@@ -261,7 +261,7 @@ class PowerOfAttorneyControllerTest {
         val expectedJson = readStringFromFile("controller/forbidden_operation.json");
 
         // When & Then
-        mockMvc.perform(delete(POA_API_PATH + "/" + POA_ID + "?grantorName=" + GRANTOR))
+        mockMvc.perform(delete(ACCOUNT_API_PATH + "/authorization/" + POA_ID + "?grantorName=" + GRANTOR))
                 .andExpect(status().isForbidden())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }

@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/v1/power-of-attorney")
+@RequestMapping("/api/v1/account")
 @RequiredArgsConstructor
-public class PowerOfAttorneyController {
+public class AccountController {
 
     private final CreatePowerOfAttorneyService createPowerOfAttorneyService;
     private final GetPowerOfAttorneyByIdService getPowerOfAttorneyByIdService;
@@ -27,27 +27,28 @@ public class PowerOfAttorneyController {
     private final UpdatePowerOfAttorneyAuthorizationService updatePowerOfAttorneyAuthorizationService;
     private final DeletePowerOfAttorneyService deletePowerOfAttorneyService;
 
-    @PostMapping
+
+    @PostMapping("/authorization")
     public ResponseEntity<PowerOfAttorneyAPIResponse> create(@RequestBody CreatePowerOfAttorneyServiceRequest request) {
         val poa = createPowerOfAttorneyService.create(request);
-        URI location = URI.create("/api/v1/power-of-attorney/" + poa.id());
+        URI location = URI.create("/api/v1/account/authorization/" + poa.id());
         return ResponseEntity.created(location).body(PowerOfAttorneyAPIResponse.from(poa));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/authorization/{id}")
     public ResponseEntity<PowerOfAttorneyAPIResponse> getById(@PathVariable("id") String id) {
         val poa = getPowerOfAttorneyByIdService.getById(id);
         return ResponseEntity.ok(PowerOfAttorneyAPIResponse.from(poa));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/authorization/{id}")
     public ResponseEntity<PowerOfAttorneyAPIResponse> updateAuthorization(@PathVariable("id") String id,
-                                                                          @RequestParam("authorization") String authorization) {
-        val poa = updatePowerOfAttorneyAuthorizationService.updateAuthorization(new UpdatePowerOfAttorneyAuthorizationRequest(id, Authorization.valueOf(authorization)));
+                                                                          @RequestParam("newAuthorization") String newAuthorization) {
+        val poa = updatePowerOfAttorneyAuthorizationService.updateAuthorization(new UpdatePowerOfAttorneyAuthorizationRequest(id, Authorization.valueOf(newAuthorization)));
         return ResponseEntity.ok(PowerOfAttorneyAPIResponse.from(poa));
     }
 
-    @GetMapping("/grantee/{granteeName}")
+    @GetMapping("/accessible-by/{granteeName}")
     public ResponseEntity<Page<PowerOfAttorneyAPIResponse>> listByGrantee(
             @PathVariable("granteeName") String granteeName,
             @PageableDefault(sort = "accountNumber", size = 5) Pageable pageable) {
@@ -56,7 +57,7 @@ public class PowerOfAttorneyController {
         return ResponseEntity.ok(body);
     }
 
-    @GetMapping("/grantor/{grantorName}")
+    @GetMapping("/granted-by/{grantorName}")
     public ResponseEntity<Page<PowerOfAttorneyAPIResponse>> listByGrantor(
             @PathVariable("grantorName") String grantorName,
             @PageableDefault(sort = "accountNumber", size = 5) Pageable pageable) {
@@ -65,7 +66,7 @@ public class PowerOfAttorneyController {
         return ResponseEntity.ok(body);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/authorization/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String id,
                                        @RequestParam("grantorName") String grantorName) {
         deletePowerOfAttorneyService.deleteByIdAsGrantor(id, grantorName);

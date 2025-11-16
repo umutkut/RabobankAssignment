@@ -33,9 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class PowerOfAttorneyControllerIT {
+class AccountControllerIT {
 
-    private static final String POA_API_PATH = "/api/v1/power-of-attorney";
+    private static final String ACCOUNT_API_PATH = "/api/v1/account";
 
     @Autowired
     MockMvc mockMvc;
@@ -67,11 +67,11 @@ class PowerOfAttorneyControllerIT {
         val expectedJson = readStringFromFile("controller/create_success.json");
 
         //When and Then
-        mockMvc.perform(post(POA_API_PATH)
+        mockMvc.perform(post(ACCOUNT_API_PATH + "/authorization")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", POA_API_PATH + "/" + POA_ID))
+                .andExpect(header().string("Location", ACCOUNT_API_PATH + "/authorization/" + POA_ID))
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
 
@@ -85,7 +85,7 @@ class PowerOfAttorneyControllerIT {
         val expectedJson = readStringFromFile("controller/account_not_found.json");
 
         //When and Then
-        mockMvc.perform(post(POA_API_PATH)
+        mockMvc.perform(post(ACCOUNT_API_PATH + "/authorization")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
@@ -103,7 +103,7 @@ class PowerOfAttorneyControllerIT {
         val expectedJson = readStringFromFile("controller/unsupported_operation.json");
 
         //When and Then
-        mockMvc.perform(post(POA_API_PATH)
+        mockMvc.perform(post(ACCOUNT_API_PATH + "/authorization")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden())
@@ -126,7 +126,7 @@ class PowerOfAttorneyControllerIT {
         val expectedJson = readStringFromFile("controller/poas_paginated.json");
 
         // When & Then
-        mockMvc.perform(get(POA_API_PATH + "/grantee/" + GRANTEE + "?page=0&size=2"))
+        mockMvc.perform(get(ACCOUNT_API_PATH + "/accessible-by/" + GRANTEE + "?page=0&size=2"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
@@ -147,7 +147,7 @@ class PowerOfAttorneyControllerIT {
         val expectedJson = readStringFromFile("controller/poas_paginated.json");
 
         // When and then
-        mockMvc.perform(get(POA_API_PATH + "/grantor/" + GRANTOR + "?page=0&size=2"))
+        mockMvc.perform(get(ACCOUNT_API_PATH + "/granted-by/" + GRANTOR + "?page=0&size=2"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
     }
