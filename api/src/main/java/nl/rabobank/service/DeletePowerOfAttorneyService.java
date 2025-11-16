@@ -21,7 +21,7 @@ public class DeletePowerOfAttorneyService {
         val poa = powerOfAttorneyRepository.findById(poaId)
                 .orElseThrow(() -> new PowerOfAttorneyNotFoundException("With id: " + poaId));
 
-        if (!poa.grantorName().equals(grantorName)) {
+        if (grantorName == null || !poa.grantorName().equalsIgnoreCase(grantorName.trim())) {
             throw new ForbiddenOperationException("Only the grantor may delete this PoA");
         }
 

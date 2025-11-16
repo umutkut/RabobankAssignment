@@ -43,7 +43,9 @@ public class AccountController {
     @PutMapping("/authorization/{id}")
     public ResponseEntity<PowerOfAttorneyAPIResponse> updateAuthorization(@PathVariable("id") String id,
                                                                           @RequestParam("newAuthorization") String newAuthorization) {
-        val poa = updatePowerOfAttorneyAuthorizationService.updateAuthorization(new UpdatePowerOfAttorneyAuthorizationRequest(id, Authorization.valueOf(newAuthorization)));
+        val poa = updatePowerOfAttorneyAuthorizationService.updateAuthorization(
+                new UpdatePowerOfAttorneyAuthorizationRequest(id, Authorization.valueOf(newAuthorization.trim().toUpperCase()))
+        );
         return ResponseEntity.ok(PowerOfAttorneyAPIResponse.from(poa));
     }
 

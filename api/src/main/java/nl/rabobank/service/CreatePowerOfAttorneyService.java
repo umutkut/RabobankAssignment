@@ -31,11 +31,11 @@ public class CreatePowerOfAttorneyService {
                 .findByAccountNumber(request.accountNumber())
                 .orElseThrow(() -> new AccountNotFoundException("With accountNumber: " + request.accountNumber()));
 
-        if (!account.accountHolderName().equals(request.grantorName())) {
+        if (!account.accountHolderName().equalsIgnoreCase(request.grantorName().trim())) {
             throw new ForbiddenOperationException("User cannot operate. " + request.grantorName() + " is not owner of the requested account.");
         }
 
-        if (request.grantorName().equals(request.granteeName())) {
+        if (request.grantorName().trim().equalsIgnoreCase(request.granteeName().trim())) {
             throw new ForbiddenOperationException("User cannot grant access to him/herself.");
         }
 

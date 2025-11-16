@@ -24,7 +24,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public List<Account> findAllByAccountHolderName(String accountHolderName) {
-        val docs = accountMongoClient.findAllByAccountHolderName(accountHolderName);
+        val docs = accountMongoClient.findAllByAccountHolderNameIgnoreCase(accountHolderName);
         return docs.stream().map(AccountMapper::toDomain).toList();
     }
 }

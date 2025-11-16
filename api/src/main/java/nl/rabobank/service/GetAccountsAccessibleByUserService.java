@@ -23,12 +23,13 @@ public class GetAccountsAccessibleByUserService {
 
     public List<AccountWithAuthorization> listAccountsAccessibleByUser(String userName) {
         log.debug("Listing accessible accounts for user: {}", userName);
+        val normalized = userName != null ? userName.trim() : null;
 
-        val ownAccounts = accountRepository.findAllByAccountHolderName(userName)
+        val ownAccounts = accountRepository.findAllByAccountHolderName(normalized)
                 .stream()
                 .map(acc -> new AccountWithAuthorization(acc, Authorization.WRITE));
 
-        val delegatedAccounts = powerOfAttorneyRepository.findByGranteeName(userName)
+        val delegatedAccounts = powerOfAttorneyRepository.findByGranteeName(normalized)
                 .stream()
                 .map(poa -> new AccountWithAuthorization(poa.account(), poa.authorization()));
 
@@ -36,7 +37,7 @@ public class GetAccountsAccessibleByUserService {
                 .sorted(Comparator.comparing(aa -> aa.account().accountNumber()))
                 .toList();
 
-        log.debug("Accessible accounts for {}: {}", userName, combined.size());
+        log.debug("Accessible accounts for {}: {}", normalized, combined.size());
         return combined;
     }
 }

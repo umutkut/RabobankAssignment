@@ -128,7 +128,7 @@ class PowerOfAttorneyRepositoryImplTest {
         val d1 = givenPowerOfAttorneyDocument();
         val d2 = givenPowerOfAttorneyDocument().toBuilder().id("id-2").accountNumber(OTHER_ACCOUNT_NUMBER).build();
 
-        when(powerOfAttorneyMongoClient.findByGranteeName(GRANTEE))
+        when(powerOfAttorneyMongoClient.findByGranteeNameIgnoreCase(GRANTEE))
                 .thenReturn(List.of(d1, d2));
 
         val a1 = givenPaymentAccountDocument();
@@ -146,7 +146,7 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(OTHER_ACCOUNT_NUMBER, result.get(1).account().accountNumber());
         assertEquals(Authorization.READ, result.get(1).authorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGranteeName(GRANTEE);
+        verify(powerOfAttorneyMongoClient, times(1)).findByGranteeNameIgnoreCase(GRANTEE);
         verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER));
     }
 
@@ -154,7 +154,7 @@ class PowerOfAttorneyRepositoryImplTest {
     void findByGrantorName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
-        when(powerOfAttorneyMongoClient.findByGrantorName(GRANTOR))
+        when(powerOfAttorneyMongoClient.findByGrantorNameIgnoreCase(GRANTOR))
                 .thenReturn(List.of(d1));
 
         val a1 = givenPaymentAccountDocument();
@@ -172,7 +172,7 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(ACCOUNT_NUMBER, poa.account().accountNumber());
         assertEquals(Authorization.READ, poa.authorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorName(GRANTOR);
+        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorNameIgnoreCase(GRANTOR);
         verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER));
     }
 

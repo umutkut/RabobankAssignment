@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface AccountMongoClient extends MongoRepository<AccountDocument, String> {
-    List<AccountDocument> findAllByAccountHolderName(String accountHolderName);
+    List<AccountDocument> findAllByAccountHolderNameIgnoreCase(String accountHolderName);
 
     List<AccountDocument> findAllByAccountNumberIn(List<String> accountNumbers);
 }

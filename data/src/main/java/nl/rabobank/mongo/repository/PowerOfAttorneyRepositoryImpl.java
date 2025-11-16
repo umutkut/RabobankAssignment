@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,19 +37,19 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
 
     @Override
     public List<PowerOfAttorney> findByGranteeName(String granteeName) {
-        val docList = powerOfAttorneyMongoClient.findByGranteeName(granteeName);
+        val docList = powerOfAttorneyMongoClient.findByGranteeNameIgnoreCase(granteeName);
         return mapListOfPoaDocsToDomain(docList);
     }
 
     @Override
     public List<PowerOfAttorney> findByGrantorName(String grantorName) {
-        val docs = powerOfAttorneyMongoClient.findByGrantorName(grantorName);
+        val docs = powerOfAttorneyMongoClient.findByGrantorNameIgnoreCase(grantorName);
         return mapListOfPoaDocsToDomain(docs);
     }
 
     @Override
     public Optional<PowerOfAttorney> findByGrantorAndGranteeAndAccountNumber(String grantor, String grantee, String accountNumber) {
-        val paoDocument = powerOfAttorneyMongoClient.findByGrantorNameAndGranteeNameAndAccountNumber(grantor, grantee, accountNumber);
+        val paoDocument = powerOfAttorneyMongoClient.findByGrantorNameIgnoreCaseAndGranteeNameIgnoreCaseAndAccountNumber(grantor, grantee, accountNumber);
         return mapOptionalPoaDocToDomain(paoDocument);
     }
 
@@ -62,7 +61,7 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
     private List<PowerOfAttorney> mapListOfPoaDocsToDomain(List<PowerOfAttorneyDocument> poaDocuments) {
         val documentNumbers = poaDocuments.stream().map(PowerOfAttorneyDocument::getAccountNumber).toList();
         val accountNumberAccountMap = accountMongoClient.findAllByAccountNumberIn(documentNumbers).stream().collect(
-                Collectors.toMap(
+                java.util.stream.Collectors.toMap(
                         AccountDocument::getAccountNumber,
                         AccountMapper::toDomain
                 )

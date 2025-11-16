@@ -17,6 +17,7 @@ public class GetGrantorPowerOfAttorneyService {
 
     public List<PowerOfAttorney> listPoasForGrantor(String grantorName) {
         log.debug("Listing POAs created by grantor: {}", grantorName);
-        return powerOfAttorneyRepository.findByGrantorName(grantorName);
+        final String normalized = grantorName != null ? grantorName.trim() : null;
+        return powerOfAttorneyRepository.findByGrantorName(normalized);
     }
 }
