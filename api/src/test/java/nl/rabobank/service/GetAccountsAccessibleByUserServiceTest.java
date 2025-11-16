@@ -1,9 +1,10 @@
 package nl.rabobank.service;
 
 import lombok.val;
-import nl.rabobank.account.Account;
+import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.repository.AccountRepository;
 import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.service.model.AccountWithAuthorization;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,7 +36,7 @@ class GetAccountsAccessibleByUserServiceTest {
         val ownAccount2 = givenPaymentAccount().toBuilder().accountNumber("NL91RABO3234567890").build();
         when(accountRepository.findAllByAccountHolderName(GRANTEE)).thenReturn(List.of(ownAccount, ownAccount2));
 
-        val poa1 = givenPowerOfAttorney(); // payment account of GRANTOR -> ACCOUNT_NUMBER
+        val poa1 = givenPowerOfAttorney();
         when(powerOfAttorneyRepository.findByGranteeName(GRANTEE))
                 .thenReturn(List.of(poa1));
 
@@ -43,7 +44,9 @@ class GetAccountsAccessibleByUserServiceTest {
         val result = service.listAccountsAccessibleByUser(GRANTEE);
 
         //Then
-        assertThat(result).extracting(Account::accountNumber)
+        assertThat(result).extracting(aa -> aa.account().accountNumber())
                 .containsExactly(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER, "NL91RABO3234567890");
+        assertThat(result).extracting(AccountWithAuthorization::authorization)
+                .containsExactly(Authorization.READ, Authorization.WRITE, Authorization.WRITE);
     }
 }

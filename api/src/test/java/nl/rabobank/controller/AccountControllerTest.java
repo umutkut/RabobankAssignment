@@ -9,6 +9,7 @@ import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
 import nl.rabobank.service.*;
+import nl.rabobank.service.model.AccountWithAuthorization;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +26,6 @@ import java.util.List;
 
 import static nl.rabobank.TestUtils.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -175,7 +175,10 @@ class AccountControllerTest {
             val acc1 = givenPaymentAccount();
             val acc2 = givenSavingsAccount().toBuilder().accountHolderName(GRANTEE).build();
             when(getGranteePowerOfAttorneyService.listAccountsAccessibleByUser(GRANTEE))
-                    .thenReturn(List.of(acc1, acc2));
+                    .thenReturn(List.of(
+                            new AccountWithAuthorization(acc1, Authorization.READ),
+                            new AccountWithAuthorization(acc2, Authorization.WRITE)
+                    ));
 
             val expectedJson = readStringFromFile("controller/accounts_list.json");
 
@@ -193,7 +196,7 @@ class AccountControllerTest {
                     .id("poa-2")
                     .account(givenSavingsAccount())
                     .build();
-            when(getGrantorPowerOfAttorneyService.listPoasForGrantor(eq(GRANTOR)))
+            when(getGrantorPowerOfAttorneyService.listPoasForGrantor(GRANTOR))
                     .thenReturn(List.of(poa1, poa2));
 
             val expectedJson = readStringFromFile("controller/poas_list.json");

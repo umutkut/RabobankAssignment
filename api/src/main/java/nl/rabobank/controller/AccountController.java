@@ -3,7 +3,7 @@ package nl.rabobank.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import nl.rabobank.authorizations.Authorization;
-import nl.rabobank.controller.model.AccountAPIResponse;
+import nl.rabobank.controller.model.AccountWithAuthorizationAPIResponse;
 import nl.rabobank.controller.model.PowerOfAttorneyAPIResponse;
 import nl.rabobank.service.*;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
@@ -48,10 +48,10 @@ public class AccountController {
     }
 
     @GetMapping("/accessible-by/{granteeName}")
-    public ResponseEntity<List<AccountAPIResponse>> listByGrantee(
+    public ResponseEntity<List<AccountWithAuthorizationAPIResponse>> listByGrantee(
             @PathVariable("granteeName") String granteeName) {
-        val accounts = getGranteePowerOfAttorneyService.listAccountsAccessibleByUser(granteeName);
-        val body = accounts.stream().map(AccountAPIResponse::from).toList();
+        val accesses = getGranteePowerOfAttorneyService.listAccountsAccessibleByUser(granteeName);
+        val body = accesses.stream().map(AccountWithAuthorizationAPIResponse::from).toList();
         return ResponseEntity.ok(body);
     }
 

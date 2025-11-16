@@ -2,7 +2,9 @@
 Power of Attorney Management API
 
 ## Overview
-This API allows account holders to grant and manage Power of Attorney authorizations for their payment and savings accounts.
+
+This API allows account holders to grant and manage Power of Attorney (PoA) authorizations for their payment and savings
+accounts.
 
 ## Business Rules
 
@@ -33,7 +35,8 @@ This API allows account holders to grant and manage Power of Attorney authorizat
 ## API Endpoints
 
 ### Create Power of Attorney
-POST /api/v1/power-of-attorney
+
+POST /api/v1/account/authorization
 - Creates new PoA authorization
 - Returns 409 if duplicate exists
 - Returns 403 if grantorName doesn't match accountHolderName
@@ -41,35 +44,38 @@ POST /api/v1/power-of-attorney
 
 ### Get Accounts by Grantee
 
-GET /api/v1/power-of-attorney/accounts?requester={requesterName}&page={num}&size={size}&includeSelf={true|false}
-
+GET /api/v1/account/accessible-by/{granteeName}
 - Returns the union of:
     - Ownership-based access for the requester (always WRITE, implicit, not stored as PoA)
     - Delegated access from stored PoAs where `granteeName = requester`
-- `includeSelf` (optional): when true (default), include ownership-based rows; when false, return only delegated PoAs
-- Default page size: 5
-- Default sorting: by `accountNumber`
+- Response model: each item contains the account details plus an `authorization` field
+    - For owned accounts: `authorization` is `WRITE`
+    - For delegated accounts: `authorization` is the PoA-provided value (`READ` or `WRITE`)
+- Pagination and sorting are not supported in the current implementation
 
 ### Get Accounts by Grantor
-GET /api/v1/power-of-attorney/accounts/granted/{requesterName}&page={num}&size={size}
+
+GET /api/v1/account/authorization/granted-by/{grantorName}
 - Returns all PoAs created by a grantor
-- Default page size: 5
-- Default sorting: by accountNumber
+- Pagination and sorting are not supported in the current implementation
 
 ### Get Power of Attorney
 
-GET /api/v1/power-of-attorney/{poaId}
+GET /api/v1/account/authorization/{poaId}
 - Returns PoA details of provided ID
 
 ### Update Power of Attorney
-PUT /api/v1/power-of-attorney/{id}
+
+PUT /api/v1/account/authorization/{id}?newAuthorization=READ|WRITE
 - Updates authorization type (READ/WRITE)
-- If request comes with the same authorization type, no change is made and returns existing PoA
+- The new authorization is provided as a query parameter `newAuthorization`
+- If request comes with the same authorization type, no change is made and the existing PoA is returned
 
 ### Delete Power of Attorney
-DELETE /api/v1/power-of-attorney/{id}
+
+DELETE /api/v1/account/authorization/{id}?grantorName={name}
 - Deletes the PoA
-- Only the grantor can perform deletion
+- Only the grantor can perform deletion (validated via `grantorName` query parameter)
 
 ## Error Handling
 
@@ -88,7 +94,7 @@ Common status codes:
 - Store in MongoDB
 - Expected volume: hundreds of PoAs
 - Deletion removes PoAs
-- Audit fields: createdAt, lastModifiedAt, modifiedBy (lower priority)
+- Audit fields
 
 ## Non-Functional Requirements
 

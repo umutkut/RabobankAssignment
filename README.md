@@ -98,6 +98,30 @@ Once started, the API listens on the default Spring Boot port (8081).
 - Import the Postman collection: `postman/PowerOfAttorney.postman_collection.json`
 - Point requests to your local server base URL
 
+## API Endpoints (current implementation)
+
+- POST /api/v1/account/authorization
+    - Create a new PoA. 201 Created with Location header `/api/v1/account/authorization/{id}`.
+- GET /api/v1/account/authorization/{id}
+    - Get PoA details by id.
+- PUT /api/v1/account/authorization/{id}?newAuthorization=READ|WRITE
+    - Update authorization type using `newAuthorization` query parameter.
+- DELETE /api/v1/account/authorization/{id}?grantorName={name}
+    - Delete PoA; only allowed when the provided `grantorName` matches the PoA grantor.
+- GET /api/v1/account/accessible-by/{granteeName}
+    - List accounts accessible by the given user. Ownership access is always included.
+    - Response items include an `authorization` field indicating the effective access for the requester:
+        - Owned accounts: `authorization` is `WRITE` (implicit, not stored as PoA)
+        - Delegated accounts: `authorization` is the PoA-provided value (`READ` or `WRITE`)
+- GET /api/v1/account/authorization/granted-by/{grantorName}
+    - List PoAs created by the given grantor.
+- GET /api/v1/audits/actor/{actorName}
+    - List audit logs performed by the given actor. Paged response with defaults: size=5, sort=createdAt. Supports
+      `page`, `size`, `sort`.
+- GET /api/v1/audits/account/{accountNumber}
+    - List audit logs related to the given account number. Paged response with defaults: size=5, sort=createdAt.
+      Supports `page`, `size`, `sort`.
+
 ## Repo Highlights
 
 - [ORIGINAL_ASSIGNMENT.md](ORIGINAL_ASSIGNMENT.md)`ORIGINAL_ASSIGNMENT.md`: original assignment brief
