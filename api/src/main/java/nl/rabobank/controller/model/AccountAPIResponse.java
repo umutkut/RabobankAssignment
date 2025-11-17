@@ -12,13 +12,12 @@ public record AccountAPIResponse(
 ) {
     public static AccountAPIResponse from(Account account) {
         String type;
-        if (account instanceof PaymentAccount) {
-            type = "PAYMENT";
-        } else if (account instanceof SavingsAccount) {
-            type = "SAVINGS";
-        } else {
-            type = "UNKNOWN";
+        switch (account) {
+            case PaymentAccount ignored -> type = "PAYMENT";
+            case SavingsAccount ignored -> type = "SAVINGS";
+            default -> type = "UNKNOWN";
         }
+
         return new AccountAPIResponse(
                 account.accountNumber(),
                 account.accountHolderName(),

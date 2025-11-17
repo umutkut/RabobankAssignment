@@ -9,6 +9,7 @@ import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
+import lombok.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -25,11 +26,13 @@ public class EmbeddedMongoTestConfiguration extends AbstractMongoClientConfigura
     private int port;
 
     @Override
+    @NonNull
     protected String getDatabaseName() {
         return "test";
     }
 
     @Override
+    @NonNull
     protected Collection<String> getMappingBasePackages() {
         return Set.of("nl.rabobank.mongo.documents");
     }
@@ -50,6 +53,7 @@ public class EmbeddedMongoTestConfiguration extends AbstractMongoClientConfigura
 
     @Bean(destroyMethod = "close")
     @Override
+    @NonNull
     public MongoClient mongoClient() {
         return MongoClients.create("mongodb://localhost:" + port + "/test");
     }

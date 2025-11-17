@@ -4,7 +4,6 @@ import nl.rabobank.account.Account;
 import nl.rabobank.account.PaymentAccount;
 import nl.rabobank.account.SavingsAccount;
 import nl.rabobank.authorizations.Authorization;
-import nl.rabobank.mongo.documents.account.AccountType;
 import nl.rabobank.service.model.AccountWithAuthorization;
 
 public record AccountWithAuthorizationAPIResponse(
@@ -17,13 +16,12 @@ public record AccountWithAuthorizationAPIResponse(
     public static AccountWithAuthorizationAPIResponse from(AccountWithAuthorization access) {
         Account account = access.account();
         String type;
-        if (account instanceof PaymentAccount) {
-            type = AccountType.PAYMENT.name();
-        } else if (account instanceof SavingsAccount) {
-            type = AccountType.SAVINGS.name();
-        } else {
-            type = "UNKNOWN";
+        switch (account) {
+            case PaymentAccount ignored -> type = "PAYMENT";
+            case SavingsAccount ignored -> type = "SAVINGS";
+            default -> type = "UNKNOWN";
         }
+
         return new AccountWithAuthorizationAPIResponse(
                 account.accountNumber(),
                 account.accountHolderName(),

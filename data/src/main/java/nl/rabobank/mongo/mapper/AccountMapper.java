@@ -13,20 +13,19 @@ public class AccountMapper {
     }
 
     public static AccountDocument toDocument(Account account) {
-        if (account instanceof PaymentAccount(String accountNumber, String accountHolderName, Double balance)) {
-            return PaymentAccountDocument.builder()
-                    .accountNumber(accountNumber)
-                    .accountHolderName(accountHolderName)
-                    .balance(balance)
+        return switch (account) {
+            case PaymentAccount paymentAccount -> PaymentAccountDocument.builder()
+                    .accountNumber(paymentAccount.accountNumber())
+                    .accountHolderName(paymentAccount.accountHolderName())
+                    .balance(paymentAccount.balance())
                     .build();
-        } else if (account instanceof SavingsAccount(String accountNumber, String accountHolderName, Double balance)) {
-            return SavingsAccountDocument.builder()
-                    .accountNumber(accountNumber)
-                    .accountHolderName(accountHolderName)
-                    .balance(balance)
+            case SavingsAccount savingsAccount -> SavingsAccountDocument.builder()
+                    .accountNumber(savingsAccount.accountNumber())
+                    .accountHolderName(savingsAccount.accountHolderName())
+                    .balance(savingsAccount.balance())
                     .build();
-        }
-        throw new IllegalArgumentException("Unknown account type");
+            default -> throw new IllegalArgumentException("Unknown account type");
+        };
     }
 
     public static Account toDomain(AccountDocument document) {
