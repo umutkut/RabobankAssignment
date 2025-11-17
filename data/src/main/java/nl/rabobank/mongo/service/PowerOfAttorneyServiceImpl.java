@@ -1,15 +1,15 @@
-package nl.rabobank.mongo.repository;
+package nl.rabobank.mongo.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import nl.rabobank.authorizations.PowerOfAttorney;
-import nl.rabobank.mongo.client.AccountMongoClient;
-import nl.rabobank.mongo.client.PowerOfAttorneyMongoClient;
 import nl.rabobank.mongo.documents.account.AccountDocument;
 import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 import nl.rabobank.mongo.mapper.AccountMapper;
 import nl.rabobank.mongo.mapper.PowerOfAttorneyMapper;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.mongo.repository.AccountMongoRepository;
+import nl.rabobank.mongo.repository.PowerOfAttorneyMongoRepository;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,50 +17,50 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository {
+public class PowerOfAttorneyServiceImpl implements PowerOfAttorneyService {
 
-    private final PowerOfAttorneyMongoClient powerOfAttorneyMongoClient;
-    private final AccountMongoClient accountMongoClient;
+    private final PowerOfAttorneyMongoRepository powerOfAttorneyMongoRepository;
+    private final AccountMongoRepository accountMongoRepository;
 
     @Override
     public PowerOfAttorney save(PowerOfAttorney powerOfAttorney) {
         val document = PowerOfAttorneyMapper.toDocument(powerOfAttorney);
-        val savedDocument = powerOfAttorneyMongoClient.save(document);
+        val savedDocument = powerOfAttorneyMongoRepository.save(document);
         return PowerOfAttorneyMapper.toDomain(savedDocument, powerOfAttorney.account());
     }
 
     @Override
     public Optional<PowerOfAttorney> findById(String id) {
-        val optPoaDocument = powerOfAttorneyMongoClient.findById(id);
+        val optPoaDocument = powerOfAttorneyMongoRepository.findById(id);
         return mapOptionalPoaDocToDomain(optPoaDocument);
     }
 
     @Override
     public List<PowerOfAttorney> findByGranteeName(String granteeName) {
-        val docList = powerOfAttorneyMongoClient.findByGranteeNameIgnoreCase(granteeName);
+        val docList = powerOfAttorneyMongoRepository.findByGranteeNameIgnoreCase(granteeName);
         return mapListOfPoaDocsToDomain(docList);
     }
 
     @Override
     public List<PowerOfAttorney> findByGrantorName(String grantorName) {
-        val docs = powerOfAttorneyMongoClient.findByGrantorNameIgnoreCase(grantorName);
+        val docs = powerOfAttorneyMongoRepository.findByGrantorNameIgnoreCase(grantorName);
         return mapListOfPoaDocsToDomain(docs);
     }
 
     @Override
     public Optional<PowerOfAttorney> findByGrantorAndGranteeAndAccountNumber(String grantor, String grantee, String accountNumber) {
-        val paoDocument = powerOfAttorneyMongoClient.findByGrantorNameIgnoreCaseAndGranteeNameIgnoreCaseAndAccountNumber(grantor, grantee, accountNumber);
+        val paoDocument = powerOfAttorneyMongoRepository.findByGrantorNameIgnoreCaseAndGranteeNameIgnoreCaseAndAccountNumber(grantor, grantee, accountNumber);
         return mapOptionalPoaDocToDomain(paoDocument);
     }
 
     @Override
     public void deleteById(String id) {
-        powerOfAttorneyMongoClient.deleteById(id);
+        powerOfAttorneyMongoRepository.deleteById(id);
     }
 
     private List<PowerOfAttorney> mapListOfPoaDocsToDomain(List<PowerOfAttorneyDocument> poaDocuments) {
         val documentNumbers = poaDocuments.stream().map(PowerOfAttorneyDocument::getAccountNumber).toList();
-        val accountNumberAccountMap = accountMongoClient.findAllByAccountNumberIn(documentNumbers).stream().collect(
+        val accountNumberAccountMap = accountMongoRepository.findAllByAccountNumberIn(documentNumbers).stream().collect(
                 java.util.stream.Collectors.toMap(
                         AccountDocument::getAccountNumber,
                         AccountMapper::toDomain
@@ -78,7 +78,7 @@ public class PowerOfAttorneyRepositoryImpl implements PowerOfAttorneyRepository 
         }
         val poaDocument = optPoaDocument.get();
 
-        val optAccountDoc = accountMongoClient.findById(poaDocument.getAccountNumber());
+        val optAccountDoc = accountMongoRepository.findById(poaDocument.getAccountNumber());
         return optAccountDoc.map(accountDoc -> PowerOfAttorneyMapper.toDomain(
                 poaDocument,
                 AccountMapper.toDomain(accountDoc)

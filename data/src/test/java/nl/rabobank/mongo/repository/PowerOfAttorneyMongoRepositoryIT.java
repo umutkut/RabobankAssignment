@@ -1,4 +1,4 @@
-package nl.rabobank.mongo.client;
+package nl.rabobank.mongo.repository;
 
 import lombok.val;
 import nl.rabobank.mongo.EmbeddedMongoTestConfiguration;
@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = EmbeddedMongoTestConfiguration.class)
-class PowerOfAttorneyMongoClientIT {
+class PowerOfAttorneyMongoRepositoryIT {
 
     @Autowired
-    private PowerOfAttorneyMongoClient powerOfAttorneyMongoClient;
+    private PowerOfAttorneyMongoRepository powerOfAttorneyMongoRepository;
 
     @BeforeEach
     void clean() {
-        powerOfAttorneyMongoClient.deleteAll();
+        powerOfAttorneyMongoRepository.deleteAll();
     }
 
     @Test
@@ -36,8 +36,8 @@ class PowerOfAttorneyMongoClientIT {
         val poa = givenPowerOfAttorneyDocument();
 
         // When
-        val saved = powerOfAttorneyMongoClient.save(poa);
-        val retrieved = powerOfAttorneyMongoClient.findById(saved.getId());
+        val saved = powerOfAttorneyMongoRepository.save(poa);
+        val retrieved = powerOfAttorneyMongoRepository.findById(saved.getId());
 
         // Then
         assertTrue(retrieved.isPresent());
@@ -61,10 +61,10 @@ class PowerOfAttorneyMongoClientIT {
                 .createdAt(CREATED_AT)
                 .updatedAt(UPDATED_AT)
                 .build();
-        powerOfAttorneyMongoClient.saveAll(List.of(poa1, poa2));
+        powerOfAttorneyMongoRepository.saveAll(List.of(poa1, poa2));
 
         // When
-        val result = powerOfAttorneyMongoClient.findByGranteeNameIgnoreCase(GRANTEE);
+        val result = powerOfAttorneyMongoRepository.findByGranteeNameIgnoreCase(GRANTEE);
 
         // Then
         assertEquals(2, result.size());
@@ -85,10 +85,10 @@ class PowerOfAttorneyMongoClientIT {
                 .createdAt(CREATED_AT)
                 .updatedAt(UPDATED_AT)
                 .build();
-        powerOfAttorneyMongoClient.saveAll(List.of(poa1, poa2));
+        powerOfAttorneyMongoRepository.saveAll(List.of(poa1, poa2));
 
         // When
-        val result = powerOfAttorneyMongoClient.findByGrantorNameIgnoreCase(GRANTOR);
+        val result = powerOfAttorneyMongoRepository.findByGrantorNameIgnoreCase(GRANTOR);
 
         // Then
         assertEquals(2, result.size());
@@ -100,13 +100,13 @@ class PowerOfAttorneyMongoClientIT {
     void shouldFindByGrantorGranteeAndAccountNumber() {
         // Given
         val poa = givenPowerOfAttorneyDocument();
-        powerOfAttorneyMongoClient.save(poa);
+        powerOfAttorneyMongoRepository.save(poa);
 
         // When
-        val found = powerOfAttorneyMongoClient.findByGrantorNameIgnoreCaseAndGranteeNameIgnoreCaseAndAccountNumber(
+        val found = powerOfAttorneyMongoRepository.findByGrantorNameIgnoreCaseAndGranteeNameIgnoreCaseAndAccountNumber(
                 GRANTOR, GRANTEE, ACCOUNT_NUMBER
         );
-        val notFound = powerOfAttorneyMongoClient.findByGrantorNameIgnoreCaseAndGranteeNameIgnoreCaseAndAccountNumber(
+        val notFound = powerOfAttorneyMongoRepository.findByGrantorNameIgnoreCaseAndGranteeNameIgnoreCaseAndAccountNumber(
                 GRANTOR, GRANTEE, "NL00RABO0000000000"
         );
 

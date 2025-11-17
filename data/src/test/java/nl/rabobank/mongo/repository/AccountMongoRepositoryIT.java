@@ -1,7 +1,8 @@
-package nl.rabobank.mongo.client;
+package nl.rabobank.mongo.repository;
 
 import lombok.val;
 import nl.rabobank.mongo.EmbeddedMongoTestConfiguration;
+import nl.rabobank.mongo.documents.account.AccountDocument;
 import nl.rabobank.mongo.documents.account.PaymentAccountDocument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = EmbeddedMongoTestConfiguration.class)
-class AccountMongoClientIT {
+class AccountMongoRepositoryIT {
 
     @Autowired
-    private AccountMongoClient accountMongoClient;
+    private AccountMongoRepository accountMongoRepository;
 
     @BeforeEach
     void clean() {
-        accountMongoClient.deleteAll();
+        accountMongoRepository.deleteAll();
     }
 
     @Test
@@ -40,8 +41,8 @@ class AccountMongoClientIT {
                 .build();
 
         // When
-        accountMongoClient.save(doc);
-        val retrieved = accountMongoClient.findById(ACCOUNT_NUMBER);
+        accountMongoRepository.save(doc);
+        val retrieved = accountMongoRepository.findById(ACCOUNT_NUMBER);
 
         // Then
         assertTrue(retrieved.isPresent());
@@ -64,14 +65,14 @@ class AccountMongoClientIT {
                 .accountHolderName(GRANTOR.toUpperCase())
                 .balance(500.0)
                 .build();
-        accountMongoClient.saveAll(List.of(doc1, doc2));
+        accountMongoRepository.saveAll(List.of(doc1, doc2));
 
         // When
-        val result = accountMongoClient.findAllByAccountHolderNameIgnoreCase(GRANTOR);
+        val result = accountMongoRepository.findAllByAccountHolderNameIgnoreCase(GRANTOR);
 
         // Then
         assertEquals(2, result.size());
-        val numbers = result.stream().map(d -> d.getAccountNumber()).toList();
+        val numbers = result.stream().map(AccountDocument::getAccountNumber).toList();
         assertTrue(numbers.containsAll(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER)));
     }
 
@@ -88,14 +89,14 @@ class AccountMongoClientIT {
                 .accountHolderName(GRANTOR)
                 .balance(500.0)
                 .build();
-        accountMongoClient.saveAll(List.of(doc1, doc2));
+        accountMongoRepository.saveAll(List.of(doc1, doc2));
 
         // When
-        val result = accountMongoClient.findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER));
+        val result = accountMongoRepository.findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER));
 
         // Then
         assertEquals(2, result.size());
-        val numbers = result.stream().map(d -> d.getAccountNumber()).toList();
+        val numbers = result.stream().map(AccountDocument::getAccountNumber).toList();
         assertTrue(numbers.containsAll(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER)));
     }
 }

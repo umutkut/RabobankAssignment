@@ -6,7 +6,7 @@ import lombok.val;
 import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +17,13 @@ import java.time.Clock;
 @RequiredArgsConstructor
 public class UpdatePowerOfAttorneyAuthorizationService {
 
-    private final PowerOfAttorneyRepository powerOfAttorneyRepository;
+    private final PowerOfAttorneyService powerOfAttorneyService;
     private final Clock clock;
     private final AuditEventsPublisher auditEventsPublisher;
 
     public PowerOfAttorney updateAuthorization(UpdatePowerOfAttorneyAuthorizationRequest request) {
         log.debug("Updating authorization for POA id: {} to {}", request.paoId(), request.authorization());
-        val poa = powerOfAttorneyRepository.findById(request.paoId())
+        val poa = powerOfAttorneyService.findById(request.paoId())
                 .orElseThrow(() -> new PowerOfAttorneyNotFoundException("With id: " + request.paoId()));
 
         if (poa.authorization() == request.authorization()) {
@@ -36,7 +36,7 @@ public class UpdatePowerOfAttorneyAuthorizationService {
                 .updatedAt(clock.instant())
                 .build();
 
-        val saved = powerOfAttorneyRepository.save(updatedPoa);
+        val saved = powerOfAttorneyService.save(updatedPoa);
         log.debug("Updated authorization for POA id: {}", request.paoId());
 
         auditEventsPublisher.publishUpdated(poa.authorization(), updatedPoa);

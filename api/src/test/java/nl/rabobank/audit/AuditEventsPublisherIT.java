@@ -2,7 +2,7 @@ package nl.rabobank.audit;
 
 import lombok.val;
 import nl.rabobank.config.AsyncConfig;
-import nl.rabobank.repository.AuditLogRepository;
+import nl.rabobank.repository.AuditLogService;
 import nl.rabobank.service.IdGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 class AuditEventsPublisherIT {
 
     @MockitoBean
-    private AuditLogRepository auditLogRepository;
+    private AuditLogService auditLogService;
 
     @Autowired
     private AuditEventsPublisher publisher;
@@ -47,7 +47,7 @@ class AuditEventsPublisherIT {
         publisher.publishCreated(poa);
 
         // Then
-        verify(auditLogRepository, times(1)).save(any(AuditLog.class));
+        verify(auditLogService, times(1)).save(any(AuditLog.class));
     }
 
     // Test configuration that overrides the async executor to run synchronously

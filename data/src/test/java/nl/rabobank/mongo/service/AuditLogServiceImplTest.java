@@ -1,10 +1,10 @@
-package nl.rabobank.mongo.repository;
+package nl.rabobank.mongo.service;
 
 import lombok.val;
 import nl.rabobank.authorizations.Authorization;
-import nl.rabobank.mongo.client.AuditLogMongoClient;
 import nl.rabobank.mongo.documents.audit.AuditLogDocument;
 import nl.rabobank.mongo.documents.poa.AuthorizationType;
+import nl.rabobank.mongo.repository.AuditLogMongoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,13 +23,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuditLogRepositoryImplTest {
+class AuditLogServiceImplTest {
 
     @Mock
-    private AuditLogMongoClient client;
+    private AuditLogMongoRepository client;
 
     @InjectMocks
-    private AuditLogRepositoryImpl repository;
+    private AuditLogServiceImpl repository;
 
     @Test
     void save_shouldMapAndPersistAndReturnDomain() {

@@ -1,10 +1,10 @@
-package nl.rabobank.mongo.repository;
+package nl.rabobank.mongo.service;
 
 import lombok.val;
 import nl.rabobank.account.Account;
 import nl.rabobank.account.PaymentAccount;
 import nl.rabobank.account.SavingsAccount;
-import nl.rabobank.mongo.client.AccountMongoClient;
+import nl.rabobank.mongo.repository.AccountMongoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,27 +18,27 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AccountRepositoryImplTest {
+class AccountServiceImplTest {
 
     @Mock
-    private AccountMongoClient accountMongoClient;
+    private AccountMongoRepository accountMongoRepository;
 
     @InjectMocks
-    private AccountRepositoryImpl service;
+    private AccountServiceImpl service;
 
     @Test
     void findByAccountNumber_shouldReturnEmptyWhenNotFound() {
-        when(accountMongoClient.findById(ACCOUNT_NUMBER)).thenReturn(Optional.empty());
+        when(accountMongoRepository.findById(ACCOUNT_NUMBER)).thenReturn(Optional.empty());
 
         assertTrue(service.findByAccountNumber(ACCOUNT_NUMBER).isEmpty());
-        verify(accountMongoClient, times(1)).findById(ACCOUNT_NUMBER);
-        verifyNoMoreInteractions(accountMongoClient);
+        verify(accountMongoRepository, times(1)).findById(ACCOUNT_NUMBER);
+        verifyNoMoreInteractions(accountMongoRepository);
     }
 
     @Test
     void findByAccountNumber_shouldMapPaymentAccountDocumentToDomain() {
         val paymentAccountDocument = givenPaymentAccountDocument();
-        when(accountMongoClient.findById(ACCOUNT_NUMBER)).thenReturn(Optional.of(paymentAccountDocument));
+        when(accountMongoRepository.findById(ACCOUNT_NUMBER)).thenReturn(Optional.of(paymentAccountDocument));
 
         Optional<Account> result = service.findByAccountNumber(ACCOUNT_NUMBER);
 
@@ -48,13 +48,13 @@ class AccountRepositoryImplTest {
         assertEquals(ACCOUNT_NUMBER, acc.accountNumber());
         assertEquals(GRANTOR, acc.accountHolderName());
         assertEquals(BALANCE, acc.balance());
-        verify(accountMongoClient, times(1)).findById(ACCOUNT_NUMBER);
+        verify(accountMongoRepository, times(1)).findById(ACCOUNT_NUMBER);
     }
 
     @Test
     void findByAccountNumber_shouldMapSavingsAccountDocumentToDomain() {
         val savingsAccountDocument = givenSavingsAccountDocument();
-        when(accountMongoClient.findById(ACCOUNT_NUMBER)).thenReturn(Optional.of(savingsAccountDocument));
+        when(accountMongoRepository.findById(ACCOUNT_NUMBER)).thenReturn(Optional.of(savingsAccountDocument));
 
         Optional<Account> result = service.findByAccountNumber(ACCOUNT_NUMBER);
 
@@ -64,6 +64,6 @@ class AccountRepositoryImplTest {
         assertEquals(ACCOUNT_NUMBER, acc.accountNumber());
         assertEquals(GRANTOR, acc.accountHolderName());
         assertEquals(BALANCE, acc.balance());
-        verify(accountMongoClient, times(1)).findById(ACCOUNT_NUMBER);
+        verify(accountMongoRepository, times(1)).findById(ACCOUNT_NUMBER);
     }
 }

@@ -1,7 +1,7 @@
 package nl.rabobank.audit;
 
 import lombok.val;
-import nl.rabobank.repository.AuditLogRepository;
+import nl.rabobank.repository.AuditLogService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 class AuditLogEventListenerTest {
 
     @Mock
-    private AuditLogRepository auditLogRepository;
+    private AuditLogService auditLogService;
 
     @InjectMocks
     private AuditLogEventListener listener;
@@ -35,6 +35,6 @@ class AuditLogEventListenerTest {
         listener.listenAuditLogEvent(event);
 
         // Then
-        verify(auditLogRepository, times(1)).save(log);
+        verify(auditLogService, times(1)).save(log);
     }
 }

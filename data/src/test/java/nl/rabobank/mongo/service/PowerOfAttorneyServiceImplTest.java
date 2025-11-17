@@ -1,13 +1,13 @@
-package nl.rabobank.mongo.repository;
+package nl.rabobank.mongo.service;
 
 import lombok.val;
 import nl.rabobank.account.Account;
 import nl.rabobank.account.PaymentAccount;
 import nl.rabobank.authorizations.Authorization;
-import nl.rabobank.mongo.client.AccountMongoClient;
-import nl.rabobank.mongo.client.PowerOfAttorneyMongoClient;
 import nl.rabobank.mongo.documents.poa.AuthorizationType;
 import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
+import nl.rabobank.mongo.repository.AccountMongoRepository;
+import nl.rabobank.mongo.repository.PowerOfAttorneyMongoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,15 +25,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class PowerOfAttorneyRepositoryImplTest {
+class PowerOfAttorneyServiceImplTest {
 
 
     @Mock
-    private PowerOfAttorneyMongoClient powerOfAttorneyMongoClient;
+    private PowerOfAttorneyMongoRepository powerOfAttorneyMongoRepository;
     @Mock
-    private AccountMongoClient accountMongoClient;
+    private AccountMongoRepository accountMongoRepository;
     @InjectMocks
-    private PowerOfAttorneyRepositoryImpl service;
+    private PowerOfAttorneyServiceImpl service;
     private Account account;
 
     @BeforeEach
@@ -47,7 +47,7 @@ class PowerOfAttorneyRepositoryImplTest {
         val input = givenPowerOfAttorney();
         val saved = givenPowerOfAttorneyDocument();
 
-        when(powerOfAttorneyMongoClient.save(any(PowerOfAttorneyDocument.class))).thenReturn(saved);
+        when(powerOfAttorneyMongoRepository.save(any(PowerOfAttorneyDocument.class))).thenReturn(saved);
 
         // When
         val result = service.save(input);
@@ -60,7 +60,7 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(Authorization.READ, result.authorization());
 
         val poaCaptor = ArgumentCaptor.forClass(PowerOfAttorneyDocument.class);
-        verify(powerOfAttorneyMongoClient, times(1)).save(poaCaptor.capture());
+        verify(powerOfAttorneyMongoRepository, times(1)).save(poaCaptor.capture());
         val toSave = poaCaptor.getValue();
         assertEquals(POA_ID, toSave.getId());
         assertEquals(GRANTOR, toSave.getGrantorName());
@@ -73,25 +73,25 @@ class PowerOfAttorneyRepositoryImplTest {
     @Test
     void findById_shouldReturnEmptyWhenPoaNotFound() {
         // Given
-        when(powerOfAttorneyMongoClient.findById(POA_ID)).thenReturn(Optional.empty());
+        when(powerOfAttorneyMongoRepository.findById(POA_ID)).thenReturn(Optional.empty());
 
         // When
         val result = service.findById(POA_ID);
 
         // Then
         assertTrue(result.isEmpty());
-        verify(powerOfAttorneyMongoClient, times(1)).findById(POA_ID);
-        verifyNoInteractions(accountMongoClient);
+        verify(powerOfAttorneyMongoRepository, times(1)).findById(POA_ID);
+        verifyNoInteractions(accountMongoRepository);
     }
 
     @Test
     void findById_shouldReturnMappedDomainWhenFoundWithAccount() {
         // Given
         val poaDoc = givenPowerOfAttorneyDocument();
-        when(powerOfAttorneyMongoClient.findById(POA_ID)).thenReturn(Optional.of(poaDoc));
+        when(powerOfAttorneyMongoRepository.findById(POA_ID)).thenReturn(Optional.of(poaDoc));
 
         val accountDoc = givenPaymentAccountDocument();
-        when(accountMongoClient.findById(ACCOUNT_NUMBER)).thenReturn(Optional.of(accountDoc));
+        when(accountMongoRepository.findById(ACCOUNT_NUMBER)).thenReturn(Optional.of(accountDoc));
 
         // When
         val result = service.findById(POA_ID);
@@ -104,16 +104,16 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(ACCOUNT_NUMBER, poa.account().accountNumber());
         assertEquals(Authorization.READ, poa.authorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findById(POA_ID);
-        verify(accountMongoClient, times(1)).findById(ACCOUNT_NUMBER);
+        verify(powerOfAttorneyMongoRepository, times(1)).findById(POA_ID);
+        verify(accountMongoRepository, times(1)).findById(ACCOUNT_NUMBER);
     }
 
     @Test
     void findById_shouldReturnEmptyWhenAccountMissing() {
         // Given
         val poaDoc = givenPowerOfAttorneyDocument();
-        when(powerOfAttorneyMongoClient.findById(POA_ID)).thenReturn(Optional.of(poaDoc));
-        when(accountMongoClient.findById(ACCOUNT_NUMBER)).thenReturn(Optional.empty());
+        when(powerOfAttorneyMongoRepository.findById(POA_ID)).thenReturn(Optional.of(poaDoc));
+        when(accountMongoRepository.findById(ACCOUNT_NUMBER)).thenReturn(Optional.empty());
 
         // When
         val result = service.findById(POA_ID);
@@ -128,12 +128,12 @@ class PowerOfAttorneyRepositoryImplTest {
         val d1 = givenPowerOfAttorneyDocument();
         val d2 = givenPowerOfAttorneyDocument().toBuilder().id("id-2").accountNumber(OTHER_ACCOUNT_NUMBER).build();
 
-        when(powerOfAttorneyMongoClient.findByGranteeNameIgnoreCase(GRANTEE))
+        when(powerOfAttorneyMongoRepository.findByGranteeNameIgnoreCase(GRANTEE))
                 .thenReturn(List.of(d1, d2));
 
         val a1 = givenPaymentAccountDocument();
         val a2 = givenPaymentAccountDocument().toBuilder().accountNumber(OTHER_ACCOUNT_NUMBER).build();
-        when(accountMongoClient.findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER)))
+        when(accountMongoRepository.findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER)))
                 .thenReturn(List.of(a1, a2));
 
         // When
@@ -146,19 +146,19 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(OTHER_ACCOUNT_NUMBER, result.get(1).account().accountNumber());
         assertEquals(Authorization.READ, result.get(1).authorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGranteeNameIgnoreCase(GRANTEE);
-        verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER));
+        verify(powerOfAttorneyMongoRepository, times(1)).findByGranteeNameIgnoreCase(GRANTEE);
+        verify(accountMongoRepository, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER, OTHER_ACCOUNT_NUMBER));
     }
 
     @Test
     void findByGrantorName_shouldJoinAccountsAndMapAll() {
         // Given
         val d1 = givenPowerOfAttorneyDocument();
-        when(powerOfAttorneyMongoClient.findByGrantorNameIgnoreCase(GRANTOR))
+        when(powerOfAttorneyMongoRepository.findByGrantorNameIgnoreCase(GRANTOR))
                 .thenReturn(List.of(d1));
 
         val a1 = givenPaymentAccountDocument();
-        when(accountMongoClient.findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER)))
+        when(accountMongoRepository.findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER)))
                 .thenReturn(List.of(a1));
 
         // When
@@ -172,8 +172,8 @@ class PowerOfAttorneyRepositoryImplTest {
         assertEquals(ACCOUNT_NUMBER, poa.account().accountNumber());
         assertEquals(Authorization.READ, poa.authorization());
 
-        verify(powerOfAttorneyMongoClient, times(1)).findByGrantorNameIgnoreCase(GRANTOR);
-        verify(accountMongoClient, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER));
+        verify(powerOfAttorneyMongoRepository, times(1)).findByGrantorNameIgnoreCase(GRANTOR);
+        verify(accountMongoRepository, times(1)).findAllByAccountNumberIn(List.of(ACCOUNT_NUMBER));
     }
 
 }

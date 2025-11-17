@@ -1,20 +1,20 @@
-package nl.rabobank.mongo.repository;
+package nl.rabobank.mongo.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import nl.rabobank.audit.AuditLog;
-import nl.rabobank.mongo.client.AuditLogMongoClient;
 import nl.rabobank.mongo.mapper.AuditLogMapper;
-import nl.rabobank.repository.AuditLogRepository;
+import nl.rabobank.mongo.repository.AuditLogMongoRepository;
+import nl.rabobank.repository.AuditLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuditLogRepositoryImpl implements AuditLogRepository {
+public class AuditLogServiceImpl implements AuditLogService {
 
-    private final AuditLogMongoClient client;
+    private final AuditLogMongoRepository client;
 
     @Override
     public AuditLog save(AuditLog auditLog) {

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
-import nl.rabobank.repository.AccountRepository;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.AccountService;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import nl.rabobank.service.IdGenerator;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import static nl.rabobank.TestUtils.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,10 +40,10 @@ class AccountControllerIT {
     ObjectMapper objectMapper;
 
     @MockitoBean
-    AccountRepository accountRepository;
+    AccountService accountService;
 
     @MockitoBean
-    PowerOfAttorneyRepository powerOfAttorneyRepository;
+    PowerOfAttorneyService powerOfAttorneyService;
 
     @MockitoBean
     IdGenerator idGenerator;
@@ -54,9 +53,9 @@ class AccountControllerIT {
     void create_success() throws Exception {
         //Given
         val account = givenPaymentAccount();
-        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
+        when(accountService.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
         when(idGenerator.generateUUID()).thenReturn(POA_ID);
-        when(powerOfAttorneyRepository.save(any(PowerOfAttorney.class)))
+        when(powerOfAttorneyService.save(any(PowerOfAttorney.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         val request = new CreatePowerOfAttorneyServiceRequest(GRANTOR, GRANTEE, ACCOUNT_NUMBER, Authorization.READ);
@@ -75,7 +74,7 @@ class AccountControllerIT {
     @Test
     void create_accountNotFound() throws Exception {
         //Given
-        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.empty());
+        when(accountService.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.empty());
 
         val request = new CreatePowerOfAttorneyServiceRequest(GRANTOR, GRANTEE, ACCOUNT_NUMBER, Authorization.READ);
 
@@ -93,7 +92,7 @@ class AccountControllerIT {
     void create_unsupportedOperation() throws Exception {
         //Given
         var account = givenPaymentAccount();
-        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
+        when(accountService.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
 
         val request = new CreatePowerOfAttorneyServiceRequest("Some other grantor", GRANTEE, ACCOUNT_NUMBER, Authorization.READ);
 
@@ -111,10 +110,10 @@ class AccountControllerIT {
     void listByGrantee_success_returnsAccounts() throws Exception {
         // Given
         val ownAccount = givenSavingsAccount().toBuilder().accountHolderName(GRANTEE).build();
-        when(accountRepository.findAllByAccountHolderName(GRANTEE)).thenReturn(List.of(ownAccount));
+        when(accountService.findAllByAccountHolderName(GRANTEE)).thenReturn(List.of(ownAccount));
 
         val poa = givenPowerOfAttorney();
-        when(powerOfAttorneyRepository.findByGranteeName(GRANTEE))
+        when(powerOfAttorneyService.findByGranteeName(GRANTEE))
                 .thenReturn(List.of(poa));
 
         val expectedJson = readStringFromFile("controller/accounts_list.json");
@@ -133,7 +132,7 @@ class AccountControllerIT {
                 .id("poa-2")
                 .account(givenSavingsAccount())
                 .build();
-        when(powerOfAttorneyRepository.findByGrantorName(eq(GRANTOR)))
+        when(powerOfAttorneyService.findByGrantorName(GRANTOR))
                 .thenReturn(List.of(poa1, poa2));
 
         val expectedJson = readStringFromFile("controller/poas_list.json");

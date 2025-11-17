@@ -4,7 +4,7 @@ import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class DeletePowerOfAttorneyServiceTest {
 
     @Mock
-    private PowerOfAttorneyRepository powerOfAttorneyRepository;
+    private PowerOfAttorneyService powerOfAttorneyService;
     @Mock
     private AuditEventsPublisher auditEventsPublisher;
 
@@ -33,43 +33,43 @@ class DeletePowerOfAttorneyServiceTest {
     void deletes_whenGrantorMatches() {
         //Given
         PowerOfAttorney poa = givenPowerOfAttorney();
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(poa));
+        when(powerOfAttorneyService.findById(POA_ID)).thenReturn(Optional.of(poa));
 
         //When
         service.deleteByIdAsGrantor(POA_ID, nl.rabobank.TestUtils.GRANTOR);
 
         //Then
-        verify(powerOfAttorneyRepository).deleteById(POA_ID);
-        verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
+        verify(powerOfAttorneyService).deleteById(POA_ID);
+        verify(powerOfAttorneyService, times(1)).findById(POA_ID);
         verify(auditEventsPublisher, times(1)).publishDeleted(poa);
-        verifyNoMoreInteractions(powerOfAttorneyRepository, auditEventsPublisher);
+        verifyNoMoreInteractions(powerOfAttorneyService, auditEventsPublisher);
     }
 
     @Test
     void notFound_whenMissing() {
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.empty());
+        when(powerOfAttorneyService.findById(POA_ID)).thenReturn(Optional.empty());
 
         //When and Then
         assertThrows(PowerOfAttorneyNotFoundException.class, () -> service.deleteByIdAsGrantor(POA_ID, nl.rabobank.TestUtils.GRANTOR));
 
-        verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
-        verify(powerOfAttorneyRepository, never()).deleteById(any());
+        verify(powerOfAttorneyService, times(1)).findById(POA_ID);
+        verify(powerOfAttorneyService, never()).deleteById(any());
         verifyNoInteractions(auditEventsPublisher);
-        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verifyNoMoreInteractions(powerOfAttorneyService);
     }
 
     @Test
     void forbidden_whenGrantorMismatch() {
         PowerOfAttorney poa = givenPowerOfAttorney().toBuilder().grantorName("other-grantor").build();
 
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(poa));
+        when(powerOfAttorneyService.findById(POA_ID)).thenReturn(Optional.of(poa));
 
         //When and Then
         assertThrows(ForbiddenOperationException.class, () -> service.deleteByIdAsGrantor(POA_ID, nl.rabobank.TestUtils.GRANTOR));
 
-        verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
-        verify(powerOfAttorneyRepository, never()).deleteById(any());
+        verify(powerOfAttorneyService, times(1)).findById(POA_ID);
+        verify(powerOfAttorneyService, never()).deleteById(any());
         verifyNoInteractions(auditEventsPublisher);
-        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verifyNoMoreInteractions(powerOfAttorneyService);
     }
 }

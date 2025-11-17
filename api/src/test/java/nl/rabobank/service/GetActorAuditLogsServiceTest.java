@@ -2,7 +2,7 @@ package nl.rabobank.service;
 
 import lombok.val;
 import nl.rabobank.audit.AuditLog;
-import nl.rabobank.repository.AuditLogRepository;
+import nl.rabobank.repository.AuditLogService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class GetActorAuditLogsServiceTest {
 
     @Mock
-    private AuditLogRepository auditLogRepository;
+    private AuditLogService auditLogService;
 
     @InjectMocks
     private GetActorAuditLogsService service;
@@ -35,7 +35,7 @@ class GetActorAuditLogsServiceTest {
 
         val expected = new PageImpl<>(List.of(log), pageable, 1);
 
-        when(auditLogRepository.findByActorName(GRANTOR, pageable)).thenReturn(expected);
+        when(auditLogService.findByActorName(GRANTOR, pageable)).thenReturn(expected);
 
         // When
         val result = service.listByActor(GRANTOR, pageable);
@@ -44,7 +44,7 @@ class GetActorAuditLogsServiceTest {
         assertEquals(1, result.getTotalElements());
         assertEquals("audit-id", result.getContent().getFirst().id());
 
-        verify(auditLogRepository, times(1)).findByActorName(GRANTOR, pageable);
-        verifyNoMoreInteractions(auditLogRepository);
+        verify(auditLogService, times(1)).findByActorName(GRANTOR, pageable);
+        verifyNoMoreInteractions(auditLogService);
     }
 }

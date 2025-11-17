@@ -4,7 +4,7 @@ import nl.rabobank.audit.AuditLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface AuditLogRepository {
+public interface AuditLogService {
     AuditLog save(AuditLog auditLog);
 
     Page<AuditLog> findByAccountNumber(String accountNumber, Pageable pageable);

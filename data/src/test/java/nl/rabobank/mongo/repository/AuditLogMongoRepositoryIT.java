@@ -1,4 +1,4 @@
-package nl.rabobank.mongo.client;
+package nl.rabobank.mongo.repository;
 
 import lombok.val;
 import nl.rabobank.audit.AuditLog;
@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = EmbeddedMongoTestConfiguration.class)
-class AuditLogMongoClientIT {
+class AuditLogMongoRepositoryIT {
 
     @Autowired
-    private AuditLogMongoClient auditLogMongoClient;
+    private AuditLogMongoRepository auditLogMongoRepository;
 
     @BeforeEach
     void clean() {
-        auditLogMongoClient.deleteAll();
+        auditLogMongoRepository.deleteAll();
     }
 
     @Test
@@ -36,8 +36,8 @@ class AuditLogMongoClientIT {
         val audit = AuditLog.created("audit-id", CREATED_AT, poa);
 
         // When
-        val result = auditLogMongoClient.save(AuditLogMapper.toDocument(audit));
-        val retrieved = auditLogMongoClient.findById(result.getId());
+        val result = auditLogMongoRepository.save(AuditLogMapper.toDocument(audit));
+        val retrieved = auditLogMongoRepository.findById(result.getId());
 
         // Then
         assertTrue(retrieved.isPresent());
@@ -51,11 +51,11 @@ class AuditLogMongoClientIT {
         val poa = givenPowerOfAttorney();
         val audit1 = AuditLog.created("audit-acc-1", CREATED_AT, poa);
         val audit2 = AuditLog.created("audit-acc-2", CREATED_AT.plusSeconds(10), poa);
-        auditLogMongoClient.save(AuditLogMapper.toDocument(audit1));
-        auditLogMongoClient.save(AuditLogMapper.toDocument(audit2));
+        auditLogMongoRepository.save(AuditLogMapper.toDocument(audit1));
+        auditLogMongoRepository.save(AuditLogMapper.toDocument(audit2));
 
         // When
-        val page = auditLogMongoClient.findByAccountNumber(poa.account().accountNumber(), PageRequest.of(0, 10));
+        val page = auditLogMongoRepository.findByAccountNumber(poa.account().accountNumber(), PageRequest.of(0, 10));
 
         // Then
         assertEquals(2, page.getTotalElements());
@@ -70,10 +70,10 @@ class AuditLogMongoClientIT {
         val poa = givenPowerOfAttorney();
         val base = AuditLog.created("audit-actor-1", CREATED_AT, poa);
         // same actorName as TestUtils.ACTOR inside mapper when created via factory
-        auditLogMongoClient.save(AuditLogMapper.toDocument(base));
+        auditLogMongoRepository.save(AuditLogMapper.toDocument(base));
 
         // When
-        val page = auditLogMongoClient.findByActorName(base.actorName(), PageRequest.of(0, 5));
+        val page = auditLogMongoRepository.findByActorName(base.actorName(), PageRequest.of(0, 5));
 
         // Then
         assertTrue(page.getTotalElements() >= 1);

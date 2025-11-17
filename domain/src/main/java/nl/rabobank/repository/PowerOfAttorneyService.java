@@ -5,7 +5,7 @@ import nl.rabobank.authorizations.PowerOfAttorney;
 import java.util.List;
 import java.util.Optional;
 
-public interface PowerOfAttorneyRepository {
+public interface PowerOfAttorneyService {
     PowerOfAttorney save(PowerOfAttorney powerOfAttorney);
 
     Optional<PowerOfAttorney> findById(String id);

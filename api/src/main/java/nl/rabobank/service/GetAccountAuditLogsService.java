@@ -2,7 +2,7 @@ package nl.rabobank.service;
 
 import lombok.RequiredArgsConstructor;
 import nl.rabobank.audit.AuditLog;
-import nl.rabobank.repository.AuditLogRepository;
+import nl.rabobank.repository.AuditLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GetAccountAuditLogsService {
 
-    private final AuditLogRepository auditLogRepository;
+    private final AuditLogService auditLogService;
 
     public Page<AuditLog> listByAccount(String accountNumber, Pageable pageable) {
-        return auditLogRepository.findByAccountNumber(accountNumber, pageable);
+        return auditLogService.findByAccountNumber(accountNumber, pageable);
     }
 }

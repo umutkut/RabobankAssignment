@@ -1,4 +1,4 @@
-package nl.rabobank.mongo.client;
+package nl.rabobank.mongo.repository;
 
 import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PowerOfAttorneyMongoClient extends MongoRepository<PowerOfAttorneyDocument, String> {
+public interface PowerOfAttorneyMongoRepository extends MongoRepository<PowerOfAttorneyDocument, String> {
 
     List<PowerOfAttorneyDocument> findByGrantorNameIgnoreCase(String grantorName);
 

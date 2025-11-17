@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import nl.rabobank.authorizations.Authorization;
-import nl.rabobank.repository.AccountRepository;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.AccountService;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import nl.rabobank.service.model.AccountWithAuthorization;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +18,18 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class GetAccountsAccessibleByUserService {
 
-    private final PowerOfAttorneyRepository powerOfAttorneyRepository;
-    private final AccountRepository accountRepository;
+    private final PowerOfAttorneyService powerOfAttorneyService;
+    private final AccountService accountService;
 
     public List<AccountWithAuthorization> listAccountsAccessibleByUser(String userName) {
         log.debug("Listing accessible accounts for user: {}", userName);
         val normalized = userName != null ? userName.trim() : null;
 
-        val ownAccounts = accountRepository.findAllByAccountHolderName(normalized)
+        val ownAccounts = accountService.findAllByAccountHolderName(normalized)
                 .stream()
                 .map(acc -> new AccountWithAuthorization(acc, Authorization.WRITE));
 
-        val delegatedAccounts = powerOfAttorneyRepository.findByGranteeName(normalized)
+        val delegatedAccounts = powerOfAttorneyService.findByGranteeName(normalized)
                 .stream()
                 .map(poa -> new AccountWithAuthorization(poa.account(), poa.authorization()));
 

@@ -2,8 +2,8 @@ package nl.rabobank.service;
 
 import lombok.val;
 import nl.rabobank.authorizations.Authorization;
-import nl.rabobank.repository.AccountRepository;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.AccountService;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import nl.rabobank.service.model.AccountWithAuthorization;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,10 +21,10 @@ import static org.mockito.Mockito.when;
 class GetAccountsAccessibleByUserServiceTest {
 
     @Mock
-    PowerOfAttorneyRepository powerOfAttorneyRepository;
+    PowerOfAttorneyService powerOfAttorneyService;
 
     @Mock
-    AccountRepository accountRepository;
+    AccountService accountService;
 
     @InjectMocks
     GetAccountsAccessibleByUserService service;
@@ -34,10 +34,10 @@ class GetAccountsAccessibleByUserServiceTest {
         //Given
         val ownAccount = givenSavingsAccount();
         val ownAccount2 = givenPaymentAccount().toBuilder().accountNumber("NL91RABO3234567890").build();
-        when(accountRepository.findAllByAccountHolderName(GRANTEE)).thenReturn(List.of(ownAccount, ownAccount2));
+        when(accountService.findAllByAccountHolderName(GRANTEE)).thenReturn(List.of(ownAccount, ownAccount2));
 
         val poa1 = givenPowerOfAttorney();
-        when(powerOfAttorneyRepository.findByGranteeName(GRANTEE))
+        when(powerOfAttorneyService.findByGranteeName(GRANTEE))
                 .thenReturn(List.of(poa1));
 
         //When

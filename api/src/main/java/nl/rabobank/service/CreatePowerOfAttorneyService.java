@@ -8,8 +8,8 @@ import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.AccountNotFoundException;
 import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
-import nl.rabobank.repository.AccountRepository;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.AccountService;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +19,15 @@ import java.time.Clock;
 @Service
 @RequiredArgsConstructor
 public class CreatePowerOfAttorneyService {
-    private final AccountRepository accountRepository;
-    private final PowerOfAttorneyRepository powerOfAttorneyRepository;
+    private final AccountService accountService;
+    private final PowerOfAttorneyService powerOfAttorneyService;
     private final IdGenerator idGenerator;
     private final Clock clock;
     private final AuditEventsPublisher auditEventsPublisher;
 
     public PowerOfAttorney create(CreatePowerOfAttorneyServiceRequest request) {
         log.debug("Creating POA for accountNumber: {}", request.accountNumber());
-        val account = accountRepository
+        val account = accountService
                 .findByAccountNumber(request.accountNumber())
                 .orElseThrow(() -> new AccountNotFoundException("With accountNumber: " + request.accountNumber()));
 
@@ -39,7 +39,7 @@ public class CreatePowerOfAttorneyService {
             throw new ForbiddenOperationException("User cannot grant access to him/herself.");
         }
 
-        powerOfAttorneyRepository
+        powerOfAttorneyService
                 .findByGrantorAndGranteeAndAccountNumber(request.grantorName(),
                         request.granteeName(),
                         request.accountNumber())
@@ -57,7 +57,7 @@ public class CreatePowerOfAttorneyService {
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
-        val savedPoa = powerOfAttorneyRepository.save(powerOfAttorney);
+        val savedPoa = powerOfAttorneyService.save(powerOfAttorney);
 
         log.debug("Created POA for accountNumber: {}", savedPoa.account().accountNumber());
         auditEventsPublisher.publishCreated(savedPoa);

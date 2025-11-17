@@ -3,7 +3,7 @@ package nl.rabobank.service;
 import lombok.val;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class GetPowerOfAttorneyByIdServiceTest {
 
     @Mock
-    private PowerOfAttorneyRepository powerOfAttorneyRepository;
+    private PowerOfAttorneyService powerOfAttorneyService;
 
     @InjectMocks
     private GetPowerOfAttorneyByIdService service;
@@ -30,7 +30,7 @@ class GetPowerOfAttorneyByIdServiceTest {
     void getById_shouldReturnPoa_whenExists() {
         // given
         val expected = givenPowerOfAttorney();
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(expected));
+        when(powerOfAttorneyService.findById(POA_ID)).thenReturn(Optional.of(expected));
 
         // when
         PowerOfAttorney poa = service.getById(POA_ID);
@@ -38,18 +38,18 @@ class GetPowerOfAttorneyByIdServiceTest {
         // then
         assertNotNull(poa);
         assertEquals(expected, poa);
-        verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
-        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verify(powerOfAttorneyService, times(1)).findById(POA_ID);
+        verifyNoMoreInteractions(powerOfAttorneyService);
     }
 
     @Test
     void getById_shouldThrowNotFound_whenMissing() {
         // given
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.empty());
+        when(powerOfAttorneyService.findById(POA_ID)).thenReturn(Optional.empty());
 
         // when and then
         assertThrows(PowerOfAttorneyNotFoundException.class, () -> service.getById(POA_ID));
-        verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
-        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verify(powerOfAttorneyService, times(1)).findById(POA_ID);
+        verifyNoMoreInteractions(powerOfAttorneyService);
     }
 }

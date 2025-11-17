@@ -5,7 +5,7 @@ import nl.rabobank.audit.AuditEventsPublisher;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.PowerOfAttorneyNotFoundException;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class UpdatePowerOfAttorneyAuthorizationServiceTest {
 
     @Mock
-    private PowerOfAttorneyRepository powerOfAttorneyRepository;
+    private PowerOfAttorneyService powerOfAttorneyService;
     @Mock
     private Clock clock;
     @Mock
@@ -39,9 +39,9 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
     void updateAuthorization_shouldUpdateAndPersist_whenPoaExists() {
         // given
         val existing = givenPowerOfAttorney();
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(existing));
+        when(powerOfAttorneyService.findById(POA_ID)).thenReturn(Optional.of(existing));
         when(clock.instant()).thenReturn(UPDATED_AT);
-        when(powerOfAttorneyRepository.save(any(PowerOfAttorney.class)))
+        when(powerOfAttorneyService.save(any(PowerOfAttorney.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         val request = new UpdatePowerOfAttorneyAuthorizationRequest(POA_ID, Authorization.WRITE);
@@ -60,10 +60,10 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
         assertThat(result.createdAt()).isEqualTo(existing.createdAt());
 
         ArgumentCaptor<PowerOfAttorney> captor = ArgumentCaptor.forClass(PowerOfAttorney.class);
-        verify(powerOfAttorneyRepository).findById(POA_ID);
-        verify(powerOfAttorneyRepository).save(captor.capture());
+        verify(powerOfAttorneyService).findById(POA_ID);
+        verify(powerOfAttorneyService).save(captor.capture());
         verify(auditEventsPublisher, times(1)).publishUpdated(existing.authorization(), captor.getValue());
-        verifyNoMoreInteractions(powerOfAttorneyRepository, auditEventsPublisher);
+        verifyNoMoreInteractions(powerOfAttorneyService, auditEventsPublisher);
 
         val saved = captor.getValue();
         assertThat(saved.authorization()).isEqualTo(Authorization.WRITE);
@@ -73,15 +73,15 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
     @Test
     void updateAuthorization_shouldThrowNotFound_whenPoaMissing() {
         // given
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.empty());
+        when(powerOfAttorneyService.findById(POA_ID)).thenReturn(Optional.empty());
 
         val request = new UpdatePowerOfAttorneyAuthorizationRequest(POA_ID, Authorization.READ);
 
         // when / then
         assertThrows(PowerOfAttorneyNotFoundException.class, () -> service.updateAuthorization(request));
-        verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
-        verify(powerOfAttorneyRepository, never()).save(any());
-        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verify(powerOfAttorneyService, times(1)).findById(POA_ID);
+        verify(powerOfAttorneyService, never()).save(any());
+        verifyNoMoreInteractions(powerOfAttorneyService);
         verifyNoInteractions(clock, auditEventsPublisher);
     }
 
@@ -89,7 +89,7 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
     void updateAuthorization_shouldReturnExistingWithoutPersist_whenAuthorizationUnchanged() {
         // given
         val existing = givenPowerOfAttorney();
-        when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(existing));
+        when(powerOfAttorneyService.findById(POA_ID)).thenReturn(Optional.of(existing));
         val request = new UpdatePowerOfAttorneyAuthorizationRequest(POA_ID, Authorization.READ);
 
         // when
@@ -97,9 +97,9 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
 
         // then
         assertThat(result).isSameAs(existing);
-        verify(powerOfAttorneyRepository, times(1)).findById(POA_ID);
-        verify(powerOfAttorneyRepository, never()).save(any());
-        verifyNoMoreInteractions(powerOfAttorneyRepository);
+        verify(powerOfAttorneyService, times(1)).findById(POA_ID);
+        verify(powerOfAttorneyService, never()).save(any());
+        verifyNoMoreInteractions(powerOfAttorneyService);
         verifyNoInteractions(clock, auditEventsPublisher);
     }
 }

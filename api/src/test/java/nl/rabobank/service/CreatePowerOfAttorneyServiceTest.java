@@ -8,8 +8,8 @@ import nl.rabobank.authorizations.PowerOfAttorney;
 import nl.rabobank.exception.AccountNotFoundException;
 import nl.rabobank.exception.ForbiddenOperationException;
 import nl.rabobank.exception.PowerOfAttorneyAlreadyExistException;
-import nl.rabobank.repository.AccountRepository;
-import nl.rabobank.repository.PowerOfAttorneyRepository;
+import nl.rabobank.repository.AccountService;
+import nl.rabobank.repository.PowerOfAttorneyService;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,9 +28,9 @@ import static org.mockito.Mockito.*;
 class CreatePowerOfAttorneyServiceTest {
 
     @Mock
-    private AccountRepository accountRepository;
+    private AccountService accountService;
     @Mock
-    private PowerOfAttorneyRepository powerOfAttorneyRepository;
+    private PowerOfAttorneyService powerOfAttorneyService;
     @Mock
     private IdGenerator idGenerator;
     @Mock
@@ -45,11 +45,11 @@ class CreatePowerOfAttorneyServiceTest {
     void create_shouldPersistAndReturnPoa_whenRequestIsValid() {
         // given
         val account = new PaymentAccount(ACCOUNT_NUMBER, GRANTOR, BALANCE);
-        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
-        when(powerOfAttorneyRepository.findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER))
+        when(accountService.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
+        when(powerOfAttorneyService.findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER))
                 .thenReturn(Optional.empty());
         when(idGenerator.generateUUID()).thenReturn(POA_ID);
-        when(powerOfAttorneyRepository.save(any(PowerOfAttorney.class)))
+        when(powerOfAttorneyService.save(any(PowerOfAttorney.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         when(clock.instant()).thenReturn(CREATED_AT);
 
@@ -72,19 +72,19 @@ class CreatePowerOfAttorneyServiceTest {
         assertEquals(Authorization.WRITE, result.authorization());
         assertEquals(CREATED_AT, result.createdAt());
         assertEquals(CREATED_AT, result.updatedAt());
-        
-        verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
-        verify(powerOfAttorneyRepository, times(1)).findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER);
+
+        verify(accountService, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
+        verify(powerOfAttorneyService, times(1)).findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER);
         verify(idGenerator, times(1)).generateUUID();
-        verify(powerOfAttorneyRepository, times(1)).save(any(PowerOfAttorney.class));
+        verify(powerOfAttorneyService, times(1)).save(any(PowerOfAttorney.class));
         verify(auditEventsPublisher, times(1)).publishCreated(result);
-        verifyNoMoreInteractions(accountRepository, idGenerator, powerOfAttorneyRepository, auditEventsPublisher);
+        verifyNoMoreInteractions(accountService, idGenerator, powerOfAttorneyService, auditEventsPublisher);
     }
 
     @Test
     void create_shouldThrowAccountNotFound_whenAccountMissing() {
         // given
-        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.empty());
+        when(accountService.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.empty());
 
         val request = new CreatePowerOfAttorneyServiceRequest(
                 GRANTOR,
@@ -95,15 +95,15 @@ class CreatePowerOfAttorneyServiceTest {
 
         // when / then
         assertThrows(AccountNotFoundException.class, () -> service.create(request));
-        verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
-        verifyNoInteractions(powerOfAttorneyRepository, idGenerator, auditEventsPublisher);
+        verify(accountService, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
+        verifyNoInteractions(powerOfAttorneyService, idGenerator, auditEventsPublisher);
     }
 
     @Test
     void create_shouldThrowUnsupportedUserOperation_whenGrantorDoesNotOwnAccount() {
         // given
         val account = new PaymentAccount(ACCOUNT_NUMBER, "Different Owner", BALANCE);
-        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
+        when(accountService.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
 
         val request = new CreatePowerOfAttorneyServiceRequest(
                 GRANTOR,
@@ -114,16 +114,16 @@ class CreatePowerOfAttorneyServiceTest {
 
         // when / then
         assertThrows(ForbiddenOperationException.class, () -> service.create(request));
-        verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
-        verifyNoInteractions(powerOfAttorneyRepository, idGenerator, auditEventsPublisher);
+        verify(accountService, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
+        verifyNoInteractions(powerOfAttorneyService, idGenerator, auditEventsPublisher);
     }
 
     @Test
     void create_shouldThrowConflict_whenPoaAlreadyExists() {
         // given
         val account = new PaymentAccount(ACCOUNT_NUMBER, GRANTOR, BALANCE);
-        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
-        when(powerOfAttorneyRepository.findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER))
+        when(accountService.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
+        when(powerOfAttorneyService.findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER))
                 .thenReturn(Optional.of(PowerOfAttorney.builder().id(POA_ID).account(account).grantorName(GRANTOR).granteeName(GRANTEE).authorization(Authorization.READ).build()));
 
         val request = new CreatePowerOfAttorneyServiceRequest(
@@ -135,17 +135,17 @@ class CreatePowerOfAttorneyServiceTest {
 
         // when / then
         assertThrows(PowerOfAttorneyAlreadyExistException.class, () -> service.create(request));
-        verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
-        verify(powerOfAttorneyRepository, times(1)).findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER);
+        verify(accountService, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
+        verify(powerOfAttorneyService, times(1)).findByGrantorAndGranteeAndAccountNumber(GRANTOR, GRANTEE, ACCOUNT_NUMBER);
         verifyNoInteractions(idGenerator, auditEventsPublisher);
-        verify(powerOfAttorneyRepository, never()).save(any());
+        verify(powerOfAttorneyService, never()).save(any());
     }
 
     @Test
     void create_shouldThrowForbidden_whenGrantorEqualsGrantee() {
         // Given
         val account = new PaymentAccount(ACCOUNT_NUMBER, GRANTOR, BALANCE);
-        when(accountRepository.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
+        when(accountService.findByAccountNumber(ACCOUNT_NUMBER)).thenReturn(Optional.of(account));
 
         val request = new CreatePowerOfAttorneyServiceRequest(
                 GRANTOR,
@@ -156,7 +156,7 @@ class CreatePowerOfAttorneyServiceTest {
 
         // When and then
         assertThrows(ForbiddenOperationException.class, () -> service.create(request));
-        verify(accountRepository, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
-        verifyNoInteractions(powerOfAttorneyRepository, idGenerator, auditEventsPublisher);
+        verify(accountService, times(1)).findByAccountNumber(ACCOUNT_NUMBER);
+        verifyNoInteractions(powerOfAttorneyService, idGenerator, auditEventsPublisher);
     }
 }

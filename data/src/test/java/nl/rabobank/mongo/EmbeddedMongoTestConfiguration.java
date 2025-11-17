@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "nl.rabobank.mongo.client")
+@EnableMongoRepositories(basePackages = "nl.rabobank.mongo.repository")
 public class EmbeddedMongoTestConfiguration extends AbstractMongoClientConfiguration {
 
     private int port;
