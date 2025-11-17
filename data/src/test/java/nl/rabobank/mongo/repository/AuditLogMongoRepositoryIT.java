@@ -2,12 +2,13 @@ package nl.rabobank.mongo.repository;
 
 import lombok.val;
 import nl.rabobank.audit.AuditLog;
-import nl.rabobank.mongo.EmbeddedMongoTestConfiguration;
+import nl.rabobank.mongo.EmbeddedMongoConfiguration;
 import nl.rabobank.mongo.mapper.AuditLogMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -17,8 +18,9 @@ import static nl.rabobank.mongo.TestUtils.givenPowerOfAttorney;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DataMongoTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = EmbeddedMongoTestConfiguration.class)
+@ContextConfiguration(classes = EmbeddedMongoConfiguration.class)
 class AuditLogMongoRepositoryIT {
 
     @Autowired
@@ -77,7 +79,7 @@ class AuditLogMongoRepositoryIT {
 
         // Then
         assertTrue(page.getTotalElements() >= 1);
-        val first = page.getContent().get(0);
+        val first = page.getContent().getFirst();
         assertEquals(base.actorName(), first.getActorName());
     }
 }

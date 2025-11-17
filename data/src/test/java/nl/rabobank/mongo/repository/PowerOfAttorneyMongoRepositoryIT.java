@@ -1,7 +1,7 @@
 package nl.rabobank.mongo.repository;
 
 import lombok.val;
-import nl.rabobank.mongo.EmbeddedMongoTestConfiguration;
+import nl.rabobank.mongo.EmbeddedMongoConfiguration;
 import nl.rabobank.mongo.documents.poa.PowerOfAttorneyDocument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = EmbeddedMongoTestConfiguration.class)
+@ContextConfiguration(classes = EmbeddedMongoConfiguration.class)
 class PowerOfAttorneyMongoRepositoryIT {
 
     @Autowired

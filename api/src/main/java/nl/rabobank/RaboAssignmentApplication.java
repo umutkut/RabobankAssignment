@@ -1,12 +1,12 @@
 package nl.rabobank;
 
-import nl.rabobank.mongo.MongoConfiguration;
+import nl.rabobank.mongo.EmbeddedMongoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import(MongoConfiguration.class)
+@Import(EmbeddedMongoConfiguration.class)
 public class RaboAssignmentApplication
 {
     public static void main(final String[] args)
