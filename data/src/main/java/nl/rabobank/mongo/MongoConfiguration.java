@@ -3,6 +3,7 @@ package nl.rabobank.mongo;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,7 @@ public class MongoConfiguration extends AbstractMongoClientConfiguration
 
     @Override
     @Bean(destroyMethod = "close")
+    @ConditionalOnMissingBean(MongoClient.class)
     public MongoClient mongoClient()
     {
         return MongoClients.create(mongoProperties.determineUri());

@@ -24,13 +24,18 @@ accounts.
 ### Account Types
 - PAYMENT - payment account
 - SAVINGS - savings account
+- Both PAYMENT and SAVINGS accounts support both authorization types
+- No differentiation between account types in this project
 
 ### Lifecycle
-
 - PoAs are permanent until deleted
 - Only the grantor can delete a PoA
 - Deletion removes the PoA from the database (there should be audit trail for this)
 - No expiration dates
+
+### Audit
+
+- Keep track of all changes to PoAs (who created/updated/deleted)
 
 ## API Endpoints
 
@@ -42,7 +47,7 @@ POST /api/v1/account/authorization
 - Returns 403 if grantorName doesn't match accountHolderName
 - User cannot grant access to him/herself
 
-### Get Accounts by Grantee
+### Get Accessible Accounts for user
 
 GET /api/v1/account/accessible-by/{granteeName}
 - Returns the union of:
@@ -53,7 +58,7 @@ GET /api/v1/account/accessible-by/{granteeName}
     - For delegated accounts: `authorization` is the PoA-provided value (`READ` or `WRITE`)
 - Pagination and sorting are not supported in the current implementation
 
-### Get Accounts by Grantor
+### Get PoAs by Grantor
 
 GET /api/v1/account/authorization/granted-by/{grantorName}
 - Returns all PoAs created by a grantor
@@ -121,8 +126,7 @@ Common status codes:
 
 ## Out of Scope
 - Real person validation
-- Account closure handling
-- Production-level audit trails
+- Account closure handling (Account lifecycle is out of scope for this project)
 - Role-based access control
 - Rate limiting
 

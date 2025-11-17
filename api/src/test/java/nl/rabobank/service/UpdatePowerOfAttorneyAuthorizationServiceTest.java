@@ -38,7 +38,7 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
     @Test
     void updateAuthorization_shouldUpdateAndPersist_whenPoaExists() {
         // given
-        val existing = givenPowerOfAttorney(); // has Authorization.READ, CREATED_AT, UPDATED_AT
+        val existing = givenPowerOfAttorney();
         when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(existing));
         when(clock.instant()).thenReturn(UPDATED_AT);
         when(powerOfAttorneyRepository.save(any(PowerOfAttorney.class)))
@@ -88,7 +88,7 @@ class UpdatePowerOfAttorneyAuthorizationServiceTest {
     @Test
     void updateAuthorization_shouldReturnExistingWithoutPersist_whenAuthorizationUnchanged() {
         // given
-        val existing = givenPowerOfAttorney(); // Authorization.READ
+        val existing = givenPowerOfAttorney();
         when(powerOfAttorneyRepository.findById(POA_ID)).thenReturn(Optional.of(existing));
         val request = new UpdatePowerOfAttorneyAuthorizationRequest(POA_ID, Authorization.READ);
 
