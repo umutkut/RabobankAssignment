@@ -113,6 +113,9 @@ What it does:
     - List audit logs related to the given account number. Paged response with defaults: size=5, sort=createdAt.
       Supports `page`, `size`, `sort`.
 
+- Swagger UI: http://localhost:8080/swagger-ui/index.html
+- Postman collection: [PowerOfAttorney.postman_collection.json](postman/PowerOfAttorney.postman_collection.json)
+
 ## Repo Highlights
 
 - [ORIGINAL_ASSIGNMENT.md](ORIGINAL_ASSIGNMENT.md)`ORIGINAL_ASSIGNMENT.md`: original assignment brief
