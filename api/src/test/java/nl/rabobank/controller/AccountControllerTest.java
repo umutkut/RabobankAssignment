@@ -2,6 +2,7 @@ package nl.rabobank.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import nl.rabobank.EmbeddedMongoTestConfiguration;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.controller.advice.GlobalControllerAdvice;
 import nl.rabobank.exception.AccountNotFoundException;
@@ -12,7 +13,6 @@ import nl.rabobank.service.*;
 import nl.rabobank.service.model.AccountWithAuthorization;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
-import nl.rabobank.test.EmbeddedMongoTestConfiguration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

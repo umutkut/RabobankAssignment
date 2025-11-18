@@ -1,4 +1,4 @@
-package nl.rabobank.test;
+package nl.rabobank;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;

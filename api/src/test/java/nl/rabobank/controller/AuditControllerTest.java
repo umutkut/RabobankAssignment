@@ -1,11 +1,11 @@
 package nl.rabobank.controller;
 
 import lombok.val;
+import nl.rabobank.EmbeddedMongoTestConfiguration;
 import nl.rabobank.audit.AuditLog;
 import nl.rabobank.controller.advice.GlobalControllerAdvice;
 import nl.rabobank.service.GetAccountAuditLogsService;
 import nl.rabobank.service.GetActorAuditLogsService;
-import nl.rabobank.test.EmbeddedMongoTestConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

@@ -56,7 +56,7 @@ This repository is a Maven multi‑module project:
 From the repo root:
 
 ```bash
-mvn spring-boot:run main-class=nl.rabobank.RaboAssignmentApplication
+mvn -pl api spring-boot:run
 ```
 
 The data module defaults (see `data/src/main/resources/application.properties`):
