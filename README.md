@@ -8,7 +8,7 @@ or Savings accounts. Users can:
 
 This repository is a Maven multi‑module project:
 
-- domain: Pure domain model and repository interfaces (no Spring)
+- domain: Pure domain model and repository interfaces
 - data: Spring Data MongoDB implementation
 - api: Spring MVC REST layer
 
@@ -16,7 +16,7 @@ This repository is a Maven multi‑module project:
 
 - Java 21 (ensure your JDK is 21; the build is configured for source/target 21)
 - Maven 3.9+
-- Docker (for local MongoDB via docker compose)
+- mongoimport and mongosh to run the sample accounts script
 
 ## Build and Test
 
@@ -51,16 +51,22 @@ This repository is a Maven multi‑module project:
 
 ## Run Locally
 
-### 1) Start MongoDB (Docker Compose)
+### 1) Run the API
 
 From the repo root:
 
 ```bash
-docker compose up -d mongo
+mvn spring-boot:run main-class=nl.rabobank.RaboAssignmentApplication
 ```
 
-This uses `docker-compose.yml` to start a local MongoDB 7 instance named `rabobank-mongo` on port `27017`, with default
-database `test`.
+The data module defaults (see `data/src/main/resources/application.properties`):
+
+- `spring.data.mongodb.host=localhost`
+- `spring.data.mongodb.port=27027`
+- `spring.data.mongodb.database=test`
+
+Once started, the API listens on the default Spring Boot port (8080).
+Embedded mongo will start at localhost 27027
 
 ### 2) Load sample accounts (optional but recommended)
 
@@ -77,21 +83,6 @@ What it does:
 - Upserts into `test.accounts` via `mongoimport`
 - Prints the resulting document count
 
-### 3) Run the API
-
-From the repo root:
-
-```bash
-mvn spring-boot:run main-class=nl.rabobank.RaboAssignmentApplication
-```
-
-The data module defaults (see `data/src/main/resources/application.properties`):
-
-- `spring.data.mongodb.host=localhost`
-- `spring.data.mongodb.port=27017`
-- `spring.data.mongodb.database=test`
-
-Once started, the API listens on the default Spring Boot port (8080).
 
 ## Try It Out
 
@@ -125,11 +116,10 @@ Once started, the API listens on the default Spring Boot port (8080).
 ## Repo Highlights
 
 - [ORIGINAL_ASSIGNMENT.md](ORIGINAL_ASSIGNMENT.md)`ORIGINAL_ASSIGNMENT.md`: original assignment brief
-- [docker-compose.yml](docker-compose.yml)`docker-compose.yml`: local MongoDB service definition
 - `scripts/`[load-accounts.sh](scripts/load-accounts.sh): helper to load mock accounts into Mongo
 - `mock/`[accounts.json](mock/accounts.json): sample accounts data
 - `postman/`[PowerOfAttorney.postman_collection.json](postman/PowerOfAttorney.postman_collection.json): requests to
   exercise the API
 - [QUESTIONS.md](QUESTIONS.md): the questions raised before starting the assignments and self-given answers to clarify
   the requirements
-- [REQUIREMENTS.md](REQUIREMENTS.md)
+- [REQUIREMENTS.md](REQUIREMENTS.md): the extracted requirements from questions

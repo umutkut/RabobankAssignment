@@ -12,12 +12,14 @@ import nl.rabobank.service.*;
 import nl.rabobank.service.model.AccountWithAuthorization;
 import nl.rabobank.service.model.CreatePowerOfAttorneyServiceRequest;
 import nl.rabobank.service.model.UpdatePowerOfAttorneyAuthorizationRequest;
+import nl.rabobank.test.EmbeddedMongoTestConfiguration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,7 +34,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AccountController.class)
-@Import(GlobalControllerAdvice.class)
+@Import({GlobalControllerAdvice.class, EmbeddedMongoTestConfiguration.class})
+@ActiveProfiles("test")
 class AccountControllerTest {
 
     private static final String ACCOUNT_API_PATH = "/api/v1/account";

@@ -103,9 +103,6 @@ Common status codes:
 
 ## Non-Functional Requirements
 
-### Performance
-- API response time: under 200ms
-
 ### Testing
 - Unit tests + integration tests required
 - Target coverage: 80%
