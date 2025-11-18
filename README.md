@@ -1,5 +1,7 @@
 # Rabobank Authorizations (Power of Attorney)
 
+Original assigment readme can be found [here](ORIGINAL_ASSIGNMENT.md).
+
 A simplified Power of Attorney (PoA) service where a grantor can give a grantee Read or Write authorization on Payment
 or Savings accounts. Users can:
 
