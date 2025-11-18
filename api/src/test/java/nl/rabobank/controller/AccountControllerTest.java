@@ -242,6 +242,32 @@ class AccountControllerTest {
                     .andExpect(status().isNotFound())
                     .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
         }
+
+        @Test
+        void updateAuthorization_badRequest_invalidAuthorization() throws Exception {
+            // Given
+            val expectedJson = readStringFromFile("controller/invalid_authorization.json");
+
+            // When & Then
+            mockMvc.perform(put(ACCOUNT_API_PATH + "/authorization/" + POA_ID + "?newAuthorization=invalid"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+        }
+
+        @Test
+        void updateAuthorization_success_nonCaseSensitive() throws Exception {
+            // Given
+            val updated = givenPowerOfAttorney().toBuilder().authorization(Authorization.WRITE).build();
+            when(updatePowerOfAttorneyAuthorizationService.updateAuthorization(any(UpdatePowerOfAttorneyAuthorizationRequest.class)))
+                    .thenReturn(updated);
+
+            val expectedJson = readStringFromFile("controller/update_success.json");
+
+            // When & Then
+            mockMvc.perform(put(ACCOUNT_API_PATH + "/authorization/" + POA_ID + "?newAuthorization=wRiTe"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(expectedJson, JsonCompareMode.STRICT));
+        }
     }
 
     @Nested
